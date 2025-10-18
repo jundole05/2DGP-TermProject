@@ -49,3 +49,23 @@ def collide(a, b):
     if bottom_a > top_b: return False
 
     return True # 충돌 발생
+
+collision_pairs = {}
+
+def add_collision_pair(group, a, b):
+    if group not in collision_pairs: # 처음 등록되는 그룹이면
+        collision_pairs[group] = ([], []) # 충돌 객체 리스트 쌍 생성
+    if a:
+        collision_pairs[group][0].append(a)
+    if b:
+        collision_pairs[group][1].append(b)
+
+def handle_collisions():
+    # 등록된 모든 충돌 그웁에 대해 충돌 검사 수행
+    for group, pairs in collision_pairs.items():
+        for a in pairs[0]:
+            for b in pairs [1]:
+                if collide(a, b):
+                    a.handle_collision(group, b) # 충돌이 왜, 누구랑 일어났는지 알려줌
+                    b.handle_collision(group, a)
+    return None
