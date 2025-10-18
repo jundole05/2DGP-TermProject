@@ -32,3 +32,9 @@ def remove_object(o):
             return
 
     raise ValueError('Cannot delete non existing object')
+
+def clear():
+    global world
+
+    for layer in world:
+        layer.clear()
