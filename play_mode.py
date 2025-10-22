@@ -3,9 +3,11 @@ from pico2d import *
 
 import game_framework
 import game_world
+from character import Character
 
 startscreen = None
 show_startscreen = True
+character = None
 
 def handle_events():
     global show_startscreen
@@ -17,10 +19,14 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN and show_startscreen:
             show_startscreen = False
+        elif not show_startscreen:
+            character.handle_event(event)
 
 def init():
-    global startscreen
+    global startscreen, character
     startscreen = load_image("./Resource/startscreen/startscreen.png")
+    character = Character()
+    game_world.add_object(character, 2)
     pass
 
 def update():
