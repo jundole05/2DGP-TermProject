@@ -93,7 +93,7 @@ class Run:
 
 class Character:
     def __init__(self):
-        self.x, self.y = 50, 90
+        self.x, self.y = 500, 500
         self.frame = 0
         self.face_dir = 1
         self.dir = 0
