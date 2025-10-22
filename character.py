@@ -44,7 +44,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 8
+FRAMES_PER_ACTION = 12
 
 class Idle:
     def __init__(self, character):
@@ -63,7 +63,7 @@ class Idle:
 
 
     def draw(self):
-        self.image.clip_draw(int(self.character.frame) * 64, (3 - self.character.face_dir) * 64, 64, 64, self.character.x, self.character.y)
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y)
 
 class Run:
     def __init__(self, character):
@@ -71,38 +71,45 @@ class Run:
         self.image = load_image('./Resource/character/Lv1/run.png')
 
     def enter(self, e):
-        if right_down(e) or left_up(e):
-            self.character.dir = self.character.face_dir = 1
-        elif left_down(e) or right_up(e):
-            self.character.dir = self.character.face_dir = -1
+        if up_down(e) or up_up(e):
+            self.character.dir_y = 1
+            self.character.face_dir = 0
+        elif down_down(e) or down_up(e):
+            self.character.dir_y = -1
+            self.character.face_dir = 3
+        elif right_down(e) or right_up(e):
+            self.character.dir_x = 1
+            self.character.face_dir = 1
+        elif left_down(e) or left_up(e):
+            self.character.dir_x = -1
+            self.character.face_dir = 2
 
     def exit(self, e):
         pass
 
     def do(self):
-        self.character.frame = (self.character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-        self.character.x += self.character.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.character.frame = (self.character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 12
+        self.character.x += self.character.dir_x * RUN_SPEED_PPS * game_framework.frame_time
+        self.character.y += self.character.dir_y * RUN_SPEED_PPS * game_framework.frame_time
 
     def draw(self):
-        if self.character.face_dir == 1:
-            self.image.clip_draw(int(self.character.frame) * 100, 0, 100, 100, self.character.x, self.character.y)
-        else:
-            self.image.clip_draw(int(self.character.frame) * 100, 100, 100, 100, self.character.x, self.character.y)
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y)
 
 class Character:
     def __init__(self):
         self.x, self.y = 500, 500
         self.frame = 0
-        self.face_dir = 1
-        self.dir = 0
+        self.face_dir = 2
+        self.dir_x = 0
+        self.dir_y = 0
 
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.state_machine = StateMachine(
             self.IDLE,
             {
-                self.IDLE: {right_down: self.RUN, left_down: self.RUN, right_up: self.IDLE, left_up: self.IDLE},
-                self.RUN: {right_up: self.IDLE, left_up: self.IDLE, right_down: self.RUN, left_down: self.RUN}
+                self.IDLE: {up_down: self.RUN, down_down: self.RUN, right_down: self.RUN, left_down: self.RUN},
+                self.RUN: {up_up: self.IDLE, down_up: self.IDLE, right_up: self.IDLE, left_up: self.IDLE}
             }
         )
 
