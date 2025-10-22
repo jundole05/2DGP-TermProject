@@ -59,13 +59,11 @@ class Idle:
         pass
 
     def do(self):
-        self.character.frame = (self.character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
+        self.character.frame = (self.character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 12
+
 
     def draw(self):
-        if self.character.face_dir == 1:
-            self.image.clip_draw(int(self.character.frame) * 100, 0, 100, 100, self.character.x, self.character.y)
-        else:
-            self.image.clip_draw(int(self.character.frame) * 100, 100, 100, 100, self.character.x, self.character.y)
+        self.image.clip_draw(int(self.character.frame) * 64, (3 - self.character.face_dir) * 64, 64, 64, self.character.x, self.character.y)
 
 class Run:
     def __init__(self, character):
