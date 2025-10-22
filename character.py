@@ -52,7 +52,8 @@ class Idle:
         self.image = load_image('./Resource/character/Lv1/idle.png')
 
     def enter(self, e):
-        self.character.dir = 0
+        self.character.dir_x = 0
+        self.character.dir_y = 0
 
     def exit(self, e):
         pass
