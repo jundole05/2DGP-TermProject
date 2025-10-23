@@ -37,7 +37,7 @@ def update():
 def draw():
     clear_canvas()
     if show_startscreen:
-        startscreen.draw(800, 450)
+        startscreen.draw_to_origin(0, 0, 1600, 1000)
     else:
         game_world.render()
     update_canvas()
