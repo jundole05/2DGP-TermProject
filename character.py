@@ -44,7 +44,9 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 12
+
+IDLE_FRAMES = [4, 12, 12, 12]
+RUN_FRAMES = 8
 
 class Idle:
     def __init__(self, character):
@@ -59,7 +61,8 @@ class Idle:
         pass
 
     def do(self):
-        self.character.frame = (self.character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 12
+        max_frames = IDLE_FRAMES[self.character.face_dir]
+        self.character.frame = (self.character.frame + max_frames * ACTION_PER_TIME * game_framework.frame_time) % max_frames
 
 
     def draw(self):
@@ -88,7 +91,7 @@ class Run:
         pass
 
     def do(self):
-        self.character.frame = (self.character.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 12
+        self.character.frame = (self.character.frame + RUN_FRAMES * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES
         self.character.x += self.character.dir_x * RUN_SPEED_PPS * game_framework.frame_time
         self.character.y += self.character.dir_y * RUN_SPEED_PPS * game_framework.frame_time
 
