@@ -66,7 +66,7 @@ class Idle:
 
 
     def draw(self):
-        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y)
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
 
 class Run:
     def __init__(self, character):
@@ -96,7 +96,7 @@ class Run:
         self.character.y += self.character.dir_y * RUN_SPEED_PPS * game_framework.frame_time
 
     def draw(self):
-        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y)
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
 
 class Character:
     def __init__(self):
