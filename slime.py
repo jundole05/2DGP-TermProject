@@ -37,3 +37,30 @@ class Idle:
         img = self.slime.idle_image
         img.clip_draw(int(self.slime.frame) * FRAMW_W, self.slime.face_dir * FRAME_H, FRAME_W, FRAME_H, self.slime.x, self.slime.y, self.slime.draw_w, self.slime.draw_h)
 
+class Run:
+    def __init__(self, slime):
+        self.slime = slime
+
+    def enter(self, e):
+        dir_map = {0: (0, 1), 1: (1, 0), 2: (-1, 0), 3: (0, -1)}
+        self.slime.dir_x, self.slime.dir_y = dir_map.get(self.slime.face_dir, (0, 0))
+
+    def exit(self, e):
+        pass
+
+    def do(self):
+        max_frames = RUN_FRAMES
+        self.slime.frame = (self.slime.frame + max_frames * ACTION_PER_TIME * game_framework.frame_time) % max_frames
+        self.slime.x += self.slime.dir_x * self.slime.speed * game_framework.frame_time
+        self.slime.y += self.slime.dir_y * self.slime.speed * game_framework.frame_time
+        # 화면 밖으로 나가지 않게 클램프
+        self.slime.x = max(self.slime.draw_w/2, min(1600 - self.slime.draw_w/2, self.slime.x))
+        self.slime.y = max(self.slime.draw_h/2, min(1000 - self.slime.draw_h/2, self.slime.y))
+
+    def draw(self):
+        img = self.slime.run_image
+        img.clip_draw(int(self.slime.frame) * FRAME_W,
+                      self.slime.face_dir * FRAME_H,
+                      FRAME_W, FRAME_H,
+                      self.slime.x, self.slime.y,
+                      self.slime.draw_w, self.slime.draw_h)
