@@ -128,3 +128,14 @@ class Slime:
 
     def handle_collision(self, group, other):
         pass
+
+def spawn_slimes(count = 5, depth = 1):
+    slimes = []
+    for _ in range(count):
+        stype = random.randint(0, 2)
+        x = random.randint(50, 1550)
+        y = random.randint(50, 950)
+        s = Slime(slime_type = stype, x = x, y = y, draw_w = 100, draw_h = 100)
+        slimes.append(s)
+        game_world.add_object(s, depth)
+    return slimes
