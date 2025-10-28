@@ -14,6 +14,12 @@ FRAME_W = 64
 FRAME_H = 64
 CHANGE_INTERVAL = 3.0
 
+PIXEL_PER_METER = (10.0 / 0.3)
+RUN_SPEED_KMPH = 20.0
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
 def run_event(e): return e[0] == 'RUN'
 def idle_event(e): return e[0] == 'IDLE'
 
@@ -70,12 +76,12 @@ class Slime:
     이미지 경로는 아래 SLIME_IMAGES 리스트에서 수정하십시오.
     """
     SLIME_IMAGES = [
-        ('./Resource/slime/slime1_idle.png', './Resource/slime/slime1_run.png'),
-        ('./Resource/slime/slime2_idle.png', './Resource/slime/slime2_run.png'),
-        ('./Resource/slime/slime3_idle.png', './Resource/slime/slime3_run.png'),
+        ('./Resource/slime/Slime1_idle.png', './Resource/slime/Slime1_run.png'),
+        ('./Resource/slime/Slime2_idle.png', './Resource/slime/Slime2_run.png'),
+        ('./Resource/slime/Slime3_idle.png', './Resource/slime/Slime3_run.png'),
     ]
 
-    def __init__(self, slime_type=0, x=100, y=100, draw_w=100, draw_h=100, speed=RUN_SPEED_PPS := 200):
+    def __init__(self, slime_type=0, x=100, y=100, draw_w=100, draw_h=100, speed=RUN_SPEED_PPS):
         # 이미지 로드 (파일 경로는 필요에 맞게 수정)
         idle_path, run_path = Slime.SLIME_IMAGES[slime_type]
         self.idle_image = load_image(idle_path)

@@ -4,6 +4,7 @@ from pico2d import *
 import game_framework
 import game_world
 from character import Character
+from slime import spawn_slimes
 
 startscreen = None
 show_startscreen = True
@@ -27,6 +28,7 @@ def init():
     startscreen = load_image("./Resource/startscreen/startscreen.png")
     character = Character()
     game_world.add_object(character, 2)
+    spawn_slimes(5)
     pass
 
 def update():
