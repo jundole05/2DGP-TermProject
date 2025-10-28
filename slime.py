@@ -2,7 +2,6 @@ import random
 from pico2d import *
 import game_world
 import game_framework
-from character import IDLE_FRAMES
 
 from state_machine import StateMachine
 
