@@ -111,6 +111,9 @@ class Attack:
         self. timer = 0
         self.prev_state = type(self.character.state_machine.cur_state)
 
+    def exit(self, e):
+        pass
+
 
 
 class Character:
