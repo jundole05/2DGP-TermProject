@@ -106,6 +106,11 @@ class Attack:
         self.image = load_image('./Resource/character/Lv1/attack.png')
         self.timer = 0
 
+    def enter(self, e):
+        self.character.frame = 0
+        self. timer = 0
+        self.prev_state = type(self.character.state_machine.cur_state)
+
 
 
 class Character:
