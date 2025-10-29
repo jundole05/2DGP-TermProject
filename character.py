@@ -100,6 +100,14 @@ class Run:
     def draw(self):
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
 
+class Attack:
+    def __init__(self, character):
+        self.character = character
+        self.image = load_image('./Resource/character/Lv1/attack.png')
+        self.timer = 0
+
+
+
 class Character:
     def __init__(self):
         self.x, self.y = 500, 500
