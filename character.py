@@ -1,3 +1,5 @@
+from time import sleep
+
 from pico2d import *
 from sdl2 import *
 
@@ -121,6 +123,10 @@ class Attack:
                 self.character.state_machine.change_state(self.character.IDLE)
             else:
                 self.character.state_machine.change_state(self.character.RUN)
+
+    def draw(self):
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
+
 
 
 
