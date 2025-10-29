@@ -114,6 +114,14 @@ class Attack:
     def exit(self, e):
         pass
 
+    def do(self):
+        self.character.frame += ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time
+        if self.character.frame >= ATTACK_FRAMES:
+            if self.prev_state == Idle:
+                self.character.state_machine.change_state(self.character.IDLE)
+            else:
+                self.character.state_machine.change_state(self.character.RUN)
+
 
 
 class Character:
