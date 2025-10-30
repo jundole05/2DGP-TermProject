@@ -21,3 +21,8 @@ class StateMachine:
     def draw(self):
         self.cur_state.draw()
 
+    def change_state(self, new_state, event = ('INTERNAL', None)):
+        self.cur_state.exit(event)
+        new_state.enter(event)
+        self.cur_state = new_state
+
