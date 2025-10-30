@@ -127,7 +127,20 @@ class Attack:
     def draw(self):
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
 
-
+    def handle_event(self, e):
+        if up_down(e):
+            self.character.face_dir = 0
+            self.character.dir_x, self.character.dir_y = 0, 1
+        elif down_down(e):
+            self.character.face_dir = 3
+            self.character.dir_x, self.character.dir_y = 0, -1
+        elif right_down(e):
+            self.character.face_dir = 1
+            self.character.dir_x, self.character.dir_y = 1, 0
+        elif left_down(e):
+            self.character.face_dir = 2
+            self.character.dir_x, self.character.dir_y = -1, 0
+        pass
 
 
 class Character:
