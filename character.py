@@ -153,11 +153,15 @@ class Character:
 
         self.IDLE = Idle(self)
         self.RUN = Run(self)
+        self.ATTACK = Attack(self)
         self.state_machine = StateMachine(
             self.IDLE,
             {
-                self.IDLE: {up_down: self.RUN, down_down: self.RUN, right_down: self.RUN, left_down: self.RUN},
-                self.RUN: {up_up: self.IDLE, down_up: self.IDLE, right_up: self.IDLE, left_up: self.IDLE}
+                self.IDLE: {up_down: self.RUN, down_down: self.RUN, right_down: self.RUN, left_down: self.RUN,
+                            space_down: self.ATTACK},
+                self.RUN: {up_up: self.IDLE, down_up: self.IDLE, right_up: self.IDLE, left_up: self.IDLE,
+                           space_down: self.ATTACK},
+                self.ATTACK: {}  # 공격 중은 내부에서 직접 전환
             }
         )
 
@@ -165,7 +169,11 @@ class Character:
         self.state_machine.update()
 
     def handle_event(self, event):
-        self.state_machine.handle_state_event(('INPUT', event))
+        cur_state = self.state_machine.cur_state
+        if isinstance(cur_state, Attack):
+            cur_state.handle_event(('INPUT', event))
+        else:
+            self.state_machine.handle_state_event(('INPUT', event))
 
     def draw(self):
         self.state_machine.draw()
