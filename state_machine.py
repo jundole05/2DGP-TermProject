@@ -1,4 +1,3 @@
-
 class StateMachine:
     def __init__(self, start_state, state_transitions):
         self.cur_state = start_state
@@ -22,8 +21,6 @@ class StateMachine:
         self.cur_state.draw()
 
     def change_state(self, new_state, event = ('INTERNAL', None)):
-        prev_state = self.cur_state
         self.cur_state.exit(event)
-        new_state.enter(('STATE_CHANGE', prev_state))
+        new_state.enter(event)
         self.cur_state = new_state
-

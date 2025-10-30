@@ -107,21 +107,11 @@ class Attack:
         self.character = character
         self.image = load_image('./Resource/character/Lv1/attack.png')
         self.timer = 0
-        self.prev_state = None
 
     def enter(self, e):
         self.character.frame = 0
         self. timer = 0
-
-        if e[0] == 'STATE_CHANGE':
-            self.prev_state = type(e[1])  # 이전 상태 기억
-            # ✅ 이전 상태가 Run이었다면 이동 방향 유지
-            if isinstance(e[1], Run):
-                self.character.dir_x = e[1].character.dir_x
-                self.character.dir_y = e[1].character.dir_y
-            elif isinstance(e[1], Idle):
-                self.character.dir_x = 0
-                self.character.dir_y = 0
+        self.prev_state = type(self.character.state_machine.cur_state)
 
     def exit(self, e):
         pass
@@ -131,10 +121,8 @@ class Attack:
         if self.character.frame >= ATTACK_FRAMES:
             if self.prev_state == Idle:
                 self.character.state_machine.change_state(self.character.IDLE)
-            elif self.prev_state == Run:
-                self.character.state_machine.change_state(self.character.RUN)
             else:
-                self.character.state_machine.change_state(self.character.IDLE)
+                self.character.state_machine.change_state(self.character.RUN)
 
     def draw(self):
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
