@@ -21,6 +21,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN and show_startscreen:
+            add_background()
             show_startscreen = False
         elif not show_startscreen:
             character.handle_event(event)
