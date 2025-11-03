@@ -5,6 +5,7 @@ import game_framework
 import game_world
 from character import Character
 from slime import spawn_slimes
+from background import Background
 
 startscreen = None
 show_startscreen = True
