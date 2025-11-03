@@ -10,6 +10,7 @@ from background import Background
 startscreen = None
 show_startscreen = True
 character = None
+background = None
 
 def handle_events():
     global show_startscreen
