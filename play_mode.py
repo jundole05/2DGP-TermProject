@@ -26,6 +26,12 @@ def handle_events():
         elif not show_startscreen:
             character.handle_event(event)
 
+def add_background():
+    global background
+    if background is None:
+        background = Background()
+        game_world.add_object(background, 0)
+
 def init():
     global startscreen, character
     startscreen = load_image("./Resource/startscreen/startscreen.png")
