@@ -40,7 +40,9 @@ def init():
 
     slimes = spawn_slimes(5)
 
-
+    game_world.add_collision_pair('character:slime', character, None)
+    for slime in slimes:
+        game_world.add_collision_pair('character:slime', None, slime)
     pass
 
 def update():
