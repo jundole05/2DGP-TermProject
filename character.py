@@ -181,3 +181,6 @@ class Character:
 
     def get_bb(self):
         return self.x - 25, self.y - 40, self.x + 25, self.y + 35
+
+    def handle_collision(self, group, other):
+        pass
