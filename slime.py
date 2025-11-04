@@ -144,6 +144,15 @@ class Slime:
         return (self.x - half_w, self.y - half_h, self.x + half_w, self.y + half_h)
 
     def handle_collision(self, group, other):
+        if group == 'character:slime':
+            # 충돌 시 슬라임을 밀어내기
+            dx = self.x - other.x
+            dy = self.y - other.y
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            if distance > 0:
+                push_distance = 5
+                self.x += (dx / distance) * push_distance
+                self.y += (dy / distance) * push_distance
         pass
 
 def spawn_slimes(count = 5, depth = 1):
