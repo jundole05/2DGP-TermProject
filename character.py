@@ -183,4 +183,13 @@ class Character:
         return self.x - 25, self.y - 40, self.x + 25, self.y + 35
 
     def handle_collision(self, group, other):
+        if group == 'character:slime':
+
+            dx = self.x - other.x
+            dy = self.y - other.y
+            distance = (dx * dx + dy * dy) ** 0.5
+            if distance > 0:
+                push_distance = 5
+                self.x += (dx / distance) * push_distance
+                self.y += (dy / distance) * push_distance
         pass
