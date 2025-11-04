@@ -37,7 +37,10 @@ def init():
     startscreen = load_image("./Resource/startscreen/startscreen.png")
     character = Character()
     game_world.add_object(character, 2)
-    spawn_slimes(5)
+
+    slimes = spawn_slimes(5)
+
+
     pass
 
 def update():
