@@ -146,6 +146,7 @@ class Attack:
 class Character:
     def __init__(self):
         self.x, self.y = 500, 500
+        self.prev_x, self.prev_y = 500, 500
         self.frame = 0
         self.face_dir = 2
         self.dir_x = 0
@@ -166,6 +167,7 @@ class Character:
         )
 
     def update(self):
+        self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
 
     def handle_event(self, event):
@@ -185,11 +187,5 @@ class Character:
     def handle_collision(self, group, other):
         if group == 'character:slime':
 
-            dx = self.x - other.x
-            dy = self.y - other.y
-            distance = (dx * dx + dy * dy) ** 0.5
-            if distance > 0:
-                push_distance = 5
-                self.x += (dx / distance) * push_distance
-                self.y += (dy / distance) * push_distance
+            self.x, self.y = self.prev_x, self.prev_y
         pass
