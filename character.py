@@ -178,3 +178,6 @@ class Character:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 25, self.y - 40, self.x + 25, self.y + 35
