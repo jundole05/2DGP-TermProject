@@ -136,10 +136,11 @@ class Slime:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        half_w = self.draw_w / 2
-        half_h = self.draw_h / 2
+        half_w = self.draw_w / 2 - 30
+        half_h = self.draw_h / 2 - 30
         return (self.x - half_w, self.y - half_h, self.x + half_w, self.y + half_h)
 
     def handle_collision(self, group, other):
