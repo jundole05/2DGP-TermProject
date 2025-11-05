@@ -93,6 +93,7 @@ class Slime:
         self.run_image = load_image(run_path)
 
         self.x, self.y = x, y
+        self.prev_x, self.prev_y = x, y
         self.draw_w, self.draw_h = draw_w, draw_h
         self.speed = speed
 
@@ -116,6 +117,7 @@ class Slime:
         self.state_timer = IDLE_DURATION
 
     def update(self):
+        self.prev_x, self.prev_y = self.x, self.y
         # 상태 내부 동작(프레임/이동)
         self.state_machine.update()
 
@@ -145,14 +147,7 @@ class Slime:
 
     def handle_collision(self, group, other):
         if group == 'character:slime':
-            # 충돌 시 슬라임을 밀어내기
-            dx = self.x - other.x
-            dy = self.y - other.y
-            distance = (dx ** 2 + dy ** 2) ** 0.5
-            if distance > 0:
-                push_distance = 5
-                self.x += (dx / distance) * push_distance
-                self.y += (dy / distance) * push_distance
+
         pass
 
 def spawn_slimes(count = 5, depth = 1):
