@@ -147,7 +147,8 @@ class Slime:
 
     def handle_collision(self, group, other):
         if group == 'character:slime':
-
+            self.x = self.prev_x
+            self.y = self.prev_y
         pass
 
 def spawn_slimes(count = 5, depth = 1):
