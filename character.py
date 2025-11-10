@@ -150,6 +150,12 @@ class Death:
         self.character = character
         self.image = load_image('./Resource/character/Lv1/death.png')
 
+    def enter(self, e):
+        self.character.frame = 0
+        self.character.dir_x = 0
+        self.character.dir_y = 0
+        self.animation_finished = False
+
 class Character:
     def __init__(self):
         self.x, self.y = 500, 500
