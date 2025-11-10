@@ -156,6 +156,20 @@ class Death:
         self.character.dir_y = 0
         self.animation_finished = False
 
+    def exit(self, e):
+        pass
+
+    def do(self):
+        if not self.animation_finished:
+            self.character.frame += DEATH_FRAMES * ACTION_PER_TIME * game_framework.frame_time
+            if self.character.frame >= DEATH_FRAMES:
+                self.character.frame = DEATH_FRAMES - 1  # 마지막 프레임에 고정
+                self.animation_finished = True
+
+    def draw(self):
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x,
+                             self.character.y, 150, 150)
+
 class Character:
     def __init__(self):
         self.x, self.y = 500, 500
