@@ -145,6 +145,10 @@ class Attack:
             self.character.dir_x, self.character.dir_y = -1, 0
         pass
 
+class Death:
+    def __init__(self, character):
+        self.character = character
+        self.image = load_image('./Resource/character/Lv1/death.png')
 
 class Character:
     def __init__(self):
