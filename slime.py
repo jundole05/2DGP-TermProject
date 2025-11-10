@@ -2,7 +2,7 @@ import random
 from pico2d import *
 import game_world
 import game_framework
-from character import Death
+
 
 from state_machine import StateMachine
 
@@ -82,6 +82,17 @@ class Run:
                       FRAME_W, FRAME_H,
                       self.slime.x, self.slime.y,
                       self.slime.draw_w, self.slime.draw_h)
+
+class Death:
+    def __init__(self, slime):
+        self.slime = slime
+
+    def enter(self, e):
+        self.slime.frame = 0
+        self.slime.dir_x = 0
+        self.slime.dir_y = 0
+        self.animation_finished = False
+
 
 class Slime:
     SLIME_IMAGES = [
