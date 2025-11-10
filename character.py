@@ -53,6 +53,7 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 IDLE_FRAMES = [4, 12, 12, 12]
 RUN_FRAMES = 8
 ATTACK_FRAMES = 8
+DEATH_FRAMES = 7
 
 class Idle:
     def __init__(self, character):
