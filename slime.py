@@ -2,6 +2,7 @@ import random
 from pico2d import *
 import game_world
 import game_framework
+from character import Death
 
 from state_machine import StateMachine
 
@@ -12,6 +13,7 @@ IDLE_FRAMES = 6
 RUN_FRAMES = 8
 FRAME_W = 64
 FRAME_H = 64
+DEATH_FRAMES = 10
 
 # durations
 IDLE_DURATION = 3.0
@@ -25,6 +27,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 def run_event(e): return e[0] == 'RUN'
 def idle_event(e): return e[0] == 'IDLE'
+def death_event(e): return e[0] == 'DEATH'
 
 class Idle:
     def __init__(self, slime):
