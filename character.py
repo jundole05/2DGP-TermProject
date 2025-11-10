@@ -182,14 +182,16 @@ class Character:
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.ATTACK = Attack(self)
+        self.DEATH = Death(self)
         self.state_machine = StateMachine(
             self.IDLE,
             {
                 self.IDLE: {up_down: self.RUN, down_down: self.RUN, right_down: self.RUN, left_down: self.RUN,
-                            space_down: self.ATTACK},
+                            space_down: self.ATTACK, one_down: self.DEATH},
                 self.RUN: {up_up: self.IDLE, down_up: self.IDLE, right_up: self.IDLE, left_up: self.IDLE,
-                           space_down: self.ATTACK},
-                self.ATTACK: {}  # 공격 중은 내부에서 직접 전환
+                           space_down: self.ATTACK, one_down: self.DEATH},
+                self.ATTACK: {one_down: self.DEATH},
+                self.DEATH: {one_down: self.IDLE}  # 1번 다시 누르면 IDLE로
             }
         )
 
