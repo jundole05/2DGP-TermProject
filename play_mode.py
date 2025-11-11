@@ -11,6 +11,7 @@ startscreen = None
 show_startscreen = True
 character = None
 background = None
+slimes = []
 
 def handle_events():
     global show_startscreen
@@ -24,7 +25,12 @@ def handle_events():
             add_background()
             show_startscreen = False
         elif not show_startscreen:
-            character.handle_event(event)
+            # 2번 키 - 모든 슬라임 death 토글
+            if event.type == SDL_KEYDOWN and event.key == SDLK_2:
+                for slime in slimes:
+                    slime.state_machine.handle_state_event(('DEATH', None))
+            else:
+                character.handle_event(event)
 
 def add_background():
     global background
