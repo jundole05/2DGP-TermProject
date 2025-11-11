@@ -113,15 +113,16 @@ class Death:
 
 class Slime:
     SLIME_IMAGES = [
-        ('./Resource/slime/Slime1/idle.png', './Resource/slime/Slime1/run.png'),
-        ('./Resource/slime/Slime2/idle.png', './Resource/slime/Slime2/run.png'),
-        ('./Resource/slime/Slime3/idle.png', './Resource/slime/Slime3/run.png'),
+        ('./Resource/slime/Slime1/idle.png', './Resource/slime/Slime1/run.png', './Resource/slime/Slime1/death.png'),
+        ('./Resource/slime/Slime2/idle.png', './Resource/slime/Slime2/run.png', './Resource/slime/Slime2/death.png'),
+        ('./Resource/slime/Slime3/idle.png', './Resource/slime/Slime3/run.png', './Resource/slime/Slime3/death.png'),
     ]
 
     def __init__(self, slime_type=0, x=100, y=100, draw_w=100, draw_h=100, speed=RUN_SPEED_PPS):
-        idle_path, run_path = Slime.SLIME_IMAGES[slime_type]
+        idle_path, run_path, death_path = Slime.SLIME_IMAGES[slime_type]
         self.idle_image = load_image(idle_path)
         self.run_image = load_image(run_path)
+        self.death_image = load_image(death_path)
 
         self.x, self.y = x, y
         self.prev_x, self.prev_y = x, y
@@ -136,11 +137,13 @@ class Slime:
 
         self.IDLE = Idle(self)
         self.RUN = Run(self)
+        self.DEATH = Death(self)
         self.state_machine = StateMachine(
             self.IDLE,
             {
-                self.IDLE: {run_event: self.RUN},
-                self.RUN: {idle_event: self.IDLE}
+                self.IDLE: {run_event: self.RUN, death_event: self.DEATH},
+                self.RUN: {idle_event: self.IDLE, death_event: self.DEATH},
+                self.DEATH: {death_event: self.IDLE}  # 다시 death_event 받으면 IDLE로
             }
         )
 
@@ -149,23 +152,20 @@ class Slime:
 
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
-        # 상태 내부 동작(프레임/이동)
         self.state_machine.update()
 
-        # 상태 타이머 감소 및 전환 처리
-        self.state_timer -= game_framework.frame_time
-        if self.state_timer <= 0:
-            # 현재 상태 판별
-            cur = self.state_machine.cur_state
-            if cur == self.IDLE:
-                # Run으로 전환: 새 방향 선택(이때 face_dir 갱신)
-                self.face_dir = random.randint(0, 3)
-                self.state_machine.handle_state_event(('RUN', None))
-                self.state_timer = RUN_DURATION
-            elif cur == self.RUN:
-                # Idle으로 전환: face_dir는 유지(마지막 run 방향)
-                self.state_machine.handle_state_event(('IDLE', None))
-                self.state_timer = IDLE_DURATION
+        # Death 상태가 아닐 때만 자동 상태 전환
+        cur = self.state_machine.cur_state
+        if cur != self.DEATH:
+            self.state_timer -= game_framework.frame_time
+            if self.state_timer <= 0:
+                if cur == self.IDLE:
+                    self.face_dir = random.randint(0, 3)
+                    self.state_machine.handle_state_event(('RUN', None))
+                    self.state_timer = RUN_DURATION
+                elif cur == self.RUN:
+                    self.state_machine.handle_state_event(('IDLE', None))
+                    self.state_timer = IDLE_DURATION
 
     def draw(self):
         self.state_machine.draw()
