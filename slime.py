@@ -93,6 +93,23 @@ class Death:
         self.slime.dir_y = 0
         self.animation_finished = False
 
+    def exit(self, e):
+        pass
+
+    def do(self):
+        if not self.animation_finished:
+            self.slime.frame += DEATH_FRAMES * ACTION_PER_TIME * game_framework.frame_time
+            if self.slime.frame >= DEATH_FRAMES:
+                self.slime.frame = DEATH_FRAMES - 1  # 마지막 프레임에 고정
+                self.animation_finished = True
+
+    def draw(self):
+        img = self.slime.death_image
+        img.clip_draw(int(self.slime.frame) * FRAME_W,
+                      self.slime.face_dir * FRAME_H,
+                      FRAME_W, FRAME_H,
+                      self.slime.x, self.slime.y,
+                      self.slime.draw_w, self.slime.draw_h)
 
 class Slime:
     SLIME_IMAGES = [
