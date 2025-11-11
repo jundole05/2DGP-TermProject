@@ -39,7 +39,7 @@ def add_background():
         game_world.add_object(background, 0)
 
 def init():
-    global startscreen, character
+    global startscreen, character, slimes
     startscreen = load_image("./Resource/startscreen/startscreen.png")
     character = Character()
     game_world.add_object(character, 2)
