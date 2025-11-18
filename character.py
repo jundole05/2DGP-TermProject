@@ -182,17 +182,28 @@ class Attack:
 
     def handle_event(self, e):
         if up_down(e):
+            self.character.key_up = True
             self.character.face_dir = 0
-            self.character.dir_x, self.character.dir_y = 0, 1
-        elif down_down(e):
+        elif up_up(e):
+            self.character.key_up = False
+
+        if down_down(e):
+            self.character.key_down = True
             self.character.face_dir = 3
-            self.character.dir_x, self.character.dir_y = 0, -1
-        elif right_down(e):
+        elif down_up(e):
+            self.character.key_down = False
+
+        if right_down(e):
+            self.character.key_right = True
             self.character.face_dir = 1
-            self.character.dir_x, self.character.dir_y = 1, 0
-        elif left_down(e):
+        elif right_up(e):
+            self.character.key_right = False
+
+        if left_down(e):
+            self.character.key_left = True
             self.character.face_dir = 2
-            self.character.dir_x, self.character.dir_y = -1, 0
+        elif left_up(e):
+            self.character.key_left = False
         pass
 
 class Death:
