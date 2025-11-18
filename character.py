@@ -87,18 +87,8 @@ class Run:
         self.image = load_image('./Resource/character/Lv1/run.png')
 
     def enter(self, e):
-        if up_down(e) or up_up(e):
-            self.character.dir_y = 1
-            self.character.face_dir = 0
-        elif down_down(e) or down_up(e):
-            self.character.dir_y = -1
-            self.character.face_dir = 3
-        elif right_down(e) or right_up(e):
-            self.character.dir_x = 1
-            self.character.face_dir = 1
-        elif left_down(e) or left_up(e):
-            self.character.dir_x = -1
-            self.character.face_dir = 2
+        self.update_key_state(e)
+        self.update_direction()
 
     def update_key_state(self, e):
         if up_down(e):
