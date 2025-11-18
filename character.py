@@ -5,6 +5,7 @@ from sdl2 import *
 
 import game_world
 import game_framework
+import math
 
 from state_machine import StateMachine
 
