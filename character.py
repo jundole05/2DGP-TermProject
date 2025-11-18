@@ -121,6 +121,29 @@ class Run:
         elif left_up(e):
             self.character.key_left = False
 
+    def update_direction(self):
+        self.character.dir_x = 0
+        self.character.dir_y = 0
+
+        if self.character.key_up:
+            self.character.dir_y = 1
+        elif self.character.key_down:
+            self.character.dir_y = -1
+
+        if self.character.key_right:
+            self.character.dir_x = 1
+        elif self.character.key_left:
+            self.character.dir_x = -1
+
+        if self.character.dir_y > 0:
+            self.character.face_dir = 0
+        elif self.character.dir_y < 0:
+            self.character.face_dir = 3
+        elif self.character.dir_x > 0:
+            self.character.face_dir = 1
+        elif self.character.dir_x < 0:
+            self.character.face_dir = 2
+
     def exit(self, e):
         pass
 
