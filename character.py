@@ -44,7 +44,8 @@ def one_down(e):
 def any_key_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key in [SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT]
 
-
+def any_key_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key in [SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT]
 PIXEL_PER_METER = (10.0 / 0.3)
 RUN_SPEED_KMPH = 20.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
