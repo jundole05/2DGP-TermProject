@@ -155,6 +155,8 @@ class Run:
         self.update_key_state(e)
         self.update_direction()
 
+        return not (self.character.key_up or self.character.key_down or self.character.key_left or self.character.key_right)
+
 class Attack:
     def __init__(self, character):
         self.character = character
