@@ -126,14 +126,34 @@ class Run:
         elif self.character.key_left:
             self.character.dir_x = -1
 
-        if self.character.dir_y > 0:
-            self.character.face_dir = 0
-        elif self.character.dir_y < 0:
-            self.character.face_dir = 3
-        elif self.character.dir_x > 0:
-            self.character.face_dir = 1
-        elif self.character.dir_x < 0:
-            self.character.face_dir = 2
+        if self.character.dir_x != 0 or self.character.dir_y != 0:
+            angle.rad = math.atan2(self.character.dir_y, self.character.dir_x)
+            angle_deg = math.degrees(angle.rad)
+
+            if -22.5 <= angle_deg < 22.5:  # 오른쪽
+                self.character.face_dir = 1
+                self.character.rotation = 0
+            elif 22.5 <= angle_deg < 67.5:  # 오른쪽위 대각선
+                self.character.face_dir = 1  # 오른쪽 스프라이트 사용
+                self.character.rotation = 45
+            elif 67.5 <= angle_deg < 112.5:  # 위
+                self.character.face_dir = 0
+                self.character.rotation = 0
+            elif 112.5 <= angle_deg < 157.5:  # 왼쪽위 대각선
+                self.character.face_dir = 2  # 왼쪽 스프라이트 사용
+                self.character.rotation = -45
+            elif angle_deg >= 157.5 or angle_deg < -157.5:  # 왼쪽
+                self.character.face_dir = 2
+                self.character.rotation = 0
+            elif -157.5 <= angle_deg < -112.5:  # 왼쪽아래 대각선
+                self.character.face_dir = 2  # 왼쪽 스프라이트 사용
+                self.character.rotation = 45
+            elif -112.5 <= angle_deg < -67.5:  # 아래
+                self.character.face_dir = 3
+                self.character.rotation = 0
+            elif -67.5 <= angle_deg < -22.5:  # 오른쪽아래 대각선
+                self.character.face_dir = 1  # 오른쪽 스프라이트 사용
+                self.character.rotation = -45
 
     def exit(self, e):
         pass
