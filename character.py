@@ -265,10 +265,6 @@ class Character:
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
 
-        if isinstance(self.state_machine.cur_state, Run):
-            if not (self.key_up or self.key_down or self.key_left or self.key_right):
-                self.state_machine.handle_state_event(('KEY_UP', None))
-
     def handle_event(self, event):
         cur_state = self.state_machine.cur_state
         if isinstance(cur_state, Attack):
