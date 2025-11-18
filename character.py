@@ -161,16 +161,27 @@ class Run:
     def do(self):
         self.character.frame = (self.character.frame + RUN_FRAMES * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES
 
-        # 대각선 이동 시 속도 보정 (√2로 나눔)
         speed = RUN_SPEED_PPS
         if self.character.dir_x != 0 and self.character.dir_y != 0:
-            speed = RUN_SPEED_PPS / 1.414  # √2 ≈ 1.414
+            speed = RUN_SPEED_PPS / 1.414
 
         self.character.x += self.character.dir_x * speed * game_framework.frame_time
         self.character.y += self.character.dir_y * speed * game_framework.frame_time
 
     def draw(self):
-        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
+        # 회전 적용해서 그리기
+        if hasattr(self.character, 'rotation') and self.character.rotation != 0:
+            # clip_composite_draw 사용 (회전 가능)
+            # clip_composite_draw(left, bottom, width, height, rotate_angle, flip, x, y, w, h)
+            self.image.clip_composite_draw(
+                int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64,
+                math.radians(self.character.rotation),  # 각도를 라디안으로
+                '',  # flip 없음
+                self.character.x, self.character.y, 150, 150
+            )
+        else:
+            # 일반 그리기
+            self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64,self.character.x, self.character.y, 150, 150)
 
     def handle_event(self, e):
         self.update_key_state(e)
