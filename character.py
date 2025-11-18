@@ -151,6 +151,10 @@ class Run:
     def draw(self):
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
 
+    def handle_event(self, e):
+        self.update_key_state(e)
+        self.update_direction()
+
 class Attack:
     def __init__(self, character):
         self.character = character
