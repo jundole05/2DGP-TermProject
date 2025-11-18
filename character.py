@@ -273,6 +273,7 @@ class Character:
         self.face_dir = 2
         self.dir_x = 0
         self.dir_y = 0
+        self.rotation = 0
 
         self.key_up = False
         self.key_down = False
