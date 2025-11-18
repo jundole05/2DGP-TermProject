@@ -274,10 +274,11 @@ class Character:
         if isinstance(cur_state, Attack):
             cur_state.handle_event(('INPUT', event))
         elif isinstance(cur_state, Run):
-            # Run 상태에서는 상태 내부에서 처리
-            cur_state.handle_event(('INPUT', event))
-            # 상태 전환도 체크
-            self.state_machine.handle_state_event(('INPUT', event))
+            # Run 상태에서 키 처리
+            should_stop = cur_state.handle_event(('INPUT', event))
+            # 모든 키가 떼어졌으면 IDLE로 전환
+            if should_stop:
+                self.state_machine.change_state(self.IDLE)
         else:
             self.state_machine.handle_state_event(('INPUT', event))
 
