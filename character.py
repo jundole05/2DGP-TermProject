@@ -271,6 +271,11 @@ class Character:
         cur_state = self.state_machine.cur_state
         if isinstance(cur_state, Attack):
             cur_state.handle_event(('INPUT', event))
+        elif isinstance(cur_state, Run):
+            # Run 상태에서는 상태 내부에서 처리
+            cur_state.handle_event(('INPUT', event))
+            # 상태 전환도 체크
+            self.state_machine.handle_state_event(('INPUT', event))
         else:
             self.state_machine.handle_state_event(('INPUT', event))
 
