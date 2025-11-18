@@ -252,12 +252,10 @@ class Character:
         self.state_machine = StateMachine(
             self.IDLE,
             {
-                self.IDLE: {up_down: self.RUN, down_down: self.RUN, right_down: self.RUN, left_down: self.RUN,
-                            space_down: self.ATTACK, one_down: self.DEATH},
-                self.RUN: {up_up: self.IDLE, down_up: self.IDLE, right_up: self.IDLE, left_up: self.IDLE,
-                           space_down: self.ATTACK, one_down: self.DEATH},
+                self.IDLE: {any_key_down: self.RUN, space_down: self.ATTACK, one_down: self.DEATH},
+                self.RUN: {any_key_up: self.IDLE, space_down: self.ATTACK, one_down: self.DEATH},
                 self.ATTACK: {one_down: self.DEATH},
-                self.DEATH: {one_down: self.IDLE}  # 1번 다시 누르면 IDLE로
+                self.DEATH: {one_down: self.IDLE}
             }
         )
 
