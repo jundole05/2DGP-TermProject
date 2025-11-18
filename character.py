@@ -139,8 +139,14 @@ class Run:
 
     def do(self):
         self.character.frame = (self.character.frame + RUN_FRAMES * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES
-        self.character.x += self.character.dir_x * RUN_SPEED_PPS * game_framework.frame_time
-        self.character.y += self.character.dir_y * RUN_SPEED_PPS * game_framework.frame_time
+
+        # 대각선 이동 시 속도 보정 (√2로 나눔)
+        speed = RUN_SPEED_PPS
+        if self.character.dir_x != 0 and self.character.dir_y != 0:
+            speed = RUN_SPEED_PPS / 1.414  # √2 ≈ 1.414
+
+        self.character.x += self.character.dir_x * speed * game_framework.frame_time
+        self.character.y += self.character.dir_y * speed * game_framework.frame_time
 
     def draw(self):
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
