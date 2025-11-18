@@ -5,7 +5,6 @@ from sdl2 import *
 
 import game_world
 import game_framework
-import math
 
 from state_machine import StateMachine
 
@@ -126,34 +125,14 @@ class Run:
         elif self.character.key_left:
             self.character.dir_x = -1
 
-        if self.character.dir_x != 0 or self.character.dir_y != 0:
-            angle_rad = math.atan2(self.character.dir_y, self.character.dir_x)
-            angle_deg = math.degrees(angle_rad)
-
-            if -22.5 <= angle_deg < 22.5:  # 오른쪽
-                self.character.face_dir = 1
-                self.character.rotation = 0
-            elif 22.5 <= angle_deg < 67.5:  # 오른쪽위 대각선
-                self.character.face_dir = 1  # 오른쪽 스프라이트 사용
-                self.character.rotation = 45
-            elif 67.5 <= angle_deg < 112.5:  # 위
-                self.character.face_dir = 0
-                self.character.rotation = 0
-            elif 112.5 <= angle_deg < 157.5:  # 왼쪽위 대각선
-                self.character.face_dir = 2  # 왼쪽 스프라이트 사용
-                self.character.rotation = -45
-            elif angle_deg >= 157.5 or angle_deg < -157.5:  # 왼쪽
-                self.character.face_dir = 2
-                self.character.rotation = 0
-            elif -157.5 <= angle_deg < -112.5:  # 왼쪽아래 대각선
-                self.character.face_dir = 2  # 왼쪽 스프라이트 사용
-                self.character.rotation = 45
-            elif -112.5 <= angle_deg < -67.5:  # 아래
-                self.character.face_dir = 3
-                self.character.rotation = 0
-            elif -67.5 <= angle_deg < -22.5:  # 오른쪽아래 대각선
-                self.character.face_dir = 1  # 오른쪽 스프라이트 사용
-                self.character.rotation = -45
+        if self.character.dir_y > 0:
+            self.character.face_dir = 0
+        elif self.character.dir_y < 0:
+            self.character.face_dir = 3
+        elif self.character.dir_x > 0:
+            self.character.face_dir = 1
+        elif self.character.dir_x < 0:
+            self.character.face_dir = 2
 
     def exit(self, e):
         pass
@@ -161,27 +140,16 @@ class Run:
     def do(self):
         self.character.frame = (self.character.frame + RUN_FRAMES * ACTION_PER_TIME * game_framework.frame_time) % RUN_FRAMES
 
+        # 대각선 이동 시 속도 보정 (√2로 나눔)
         speed = RUN_SPEED_PPS
         if self.character.dir_x != 0 and self.character.dir_y != 0:
-            speed = RUN_SPEED_PPS / 1.414
+            speed = RUN_SPEED_PPS / 1.414  # √2 ≈ 1.414
 
         self.character.x += self.character.dir_x * speed * game_framework.frame_time
         self.character.y += self.character.dir_y * speed * game_framework.frame_time
 
     def draw(self):
-        # 회전 적용해서 그리기
-        if hasattr(self.character, 'rotation') and self.character.rotation != 0:
-            # clip_composite_draw 사용 (회전 가능)
-            # clip_composite_draw(left, bottom, width, height, rotate_angle, flip, x, y, w, h)
-            self.image.clip_composite_draw(
-                int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64,
-                math.radians(self.character.rotation),  # 각도를 라디안으로
-                '',  # flip 없음
-                self.character.x, self.character.y, 150, 150
-            )
-        else:
-            # 일반 그리기
-            self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64,self.character.x, self.character.y, 150, 150)
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
 
     def handle_event(self, e):
         self.update_key_state(e)
@@ -273,7 +241,6 @@ class Character:
         self.face_dir = 2
         self.dir_x = 0
         self.dir_y = 0
-        self.rotation = 0
 
         self.key_up = False
         self.key_down = False
