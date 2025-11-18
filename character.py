@@ -240,6 +240,11 @@ class Character:
         self.dir_x = 0
         self.dir_y = 0
 
+        self.key_up = False
+        self.key_down = False
+        self.key_left = False
+        self.key_right = False
+
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.ATTACK = Attack(self)
