@@ -127,8 +127,8 @@ class Run:
             self.character.dir_x = -1
 
         if self.character.dir_x != 0 or self.character.dir_y != 0:
-            angle.rad = math.atan2(self.character.dir_y, self.character.dir_x)
-            angle_deg = math.degrees(angle.rad)
+            angle_rad = math.atan2(self.character.dir_y, self.character.dir_x)
+            angle_deg = math.degrees(angle_rad)
 
             if -22.5 <= angle_deg < 22.5:  # 오른쪽
                 self.character.face_dir = 1
