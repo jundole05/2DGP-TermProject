@@ -288,12 +288,10 @@ class Slime:
 
         return BehaviorTree.RUNNING
 
-
-
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
 
-        # Death 상태일 때는 BT 실행 안함
+        # Death나 Attack 상태일 때는 BT 실행 조정
         if self.state_machine.cur_state == self.DEATH:
             self.state_machine.update()
             return
