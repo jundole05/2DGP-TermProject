@@ -33,6 +33,35 @@ def idle_event(e): return e[0] == 'IDLE'
 def death_event(e): return e[0] == 'DEATH'
 def attack_event(e): return e[0] == 'ATTACK'
 
+class Attack:
+    def __init__(self, slime):
+        self.slime = slime
+
+    def enter(self, e):
+        self.slime.frame = 0
+        self.slime_dir_x = 0
+        self.slime_dir_y = 0
+        self.animation_finished = False
+
+    def __exit__(self, e):
+        pass
+
+    def do(self):
+        if not self.animation_finished:
+            self.slime.frame += ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time
+            if self.slime.frame >= ATTACK_FRAMES:
+                self.slime.frame = ATTACK_FRAMES - 1
+                self.animation_finished = True
+
+    def draw(self):
+        img = self.slime.attack_image
+        img.clip_draw(int(self.slime.frame) * FRAME_W,
+                      self.slime.face_dir * FRAME_H,
+                      FRAME_W, FRAME_H,
+                      self.slime.x, self.slime.y,
+                      self.slime.draw_w, self.slime.draw_h)
+
+
 class Idle:
     def __init__(self, slime):
         self.slime = slime
