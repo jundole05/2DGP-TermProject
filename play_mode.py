@@ -31,7 +31,7 @@ def handle_events():
                 for slime in slimes:
                     slime.state_machine.handle_state_event(('DEATH', None))
             else:
-                character.handle_event(event)
+                common.character.handle_event(event)
 
 def add_background():
     global background
@@ -40,14 +40,14 @@ def add_background():
         game_world.add_object(background, 0)
 
 def init():
-    global startscreen, character, slimes
+    global startscreen, slimes
     startscreen = load_image("./Resource/startscreen/startscreen.png")
-    character = Character()
+    common.character = Character()
     game_world.add_object(character, 2)
 
     slimes = spawn_slimes(5)
 
-    game_world.add_collision_pair('character:slime', character, None)
+    game_world.add_collision_pair('character:slime', common.character, None)
     for slime in slimes:
         game_world.add_collision_pair('character:slime', None, slime)
     pass
