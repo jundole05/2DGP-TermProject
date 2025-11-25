@@ -159,6 +159,7 @@ class Slime:
         self.idle_image = load_image(idle_path)
         self.run_image = load_image(run_path)
         self.death_image = load_image(death_path)
+        self.attack_image = load_image(attack_path)
 
         self.x, self.y = x, y
         self.prev_x, self.prev_y = x, y
@@ -175,12 +176,14 @@ class Slime:
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.DEATH = Death(self)
+        self.ATTACK = Attack(self)
         self.state_machine = StateMachine(
             self.IDLE,
             {
-                self.IDLE: {run_event: self.RUN, death_event: self.DEATH},
-                self.RUN: {idle_event: self.IDLE, death_event: self.DEATH},
-                self.DEATH: {death_event: self.IDLE}  # 다시 death_event 받으면 IDLE로
+                self.IDLE: {run_event: self.RUN, death_event: self.DEATH, attack_event: self.ATTACK},
+                self.RUN: {idle_event: self.IDLE, death_event: self.DEATH, attack_event: self.ATTACK},
+                self.ATTACK: {run_event: self.RUN, idle_event: self.IDLE, death_event: self.DEATH},
+                self.DEATH: {death_event: self.IDLE}
             }
         )
 
