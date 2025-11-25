@@ -146,9 +146,12 @@ class Death:
 
 class Slime:
     SLIME_IMAGES = [
-        ('./Resource/slime/Slime1/idle.png', './Resource/slime/Slime1/run.png', './Resource/slime/Slime1/death.png'),
-        ('./Resource/slime/Slime2/idle.png', './Resource/slime/Slime2/run.png', './Resource/slime/Slime2/death.png'),
-        ('./Resource/slime/Slime3/idle.png', './Resource/slime/Slime3/run.png', './Resource/slime/Slime3/death.png'),
+        ('./Resource/slime/Slime1/idle.png', './Resource/slime/Slime1/run.png', './Resource/slime/Slime1/death.png',
+         './Resource/slime/Slime1/attack.png'),
+        ('./Resource/slime/Slime2/idle.png', './Resource/slime/Slime2/run.png', './Resource/slime/Slime2/death.png',
+         './Resource/slime/Slime2/attack.png'),
+        ('./Resource/slime/Slime3/idle.png', './Resource/slime/Slime3/run.png', './Resource/slime/Slime3/death.png',
+         './Resource/slime/Slime3/attack.png'),
     ]
 
     def __init__(self, slime_type=0, x=100, y=100, draw_w=100, draw_h=100, speed=RUN_SPEED_PPS):
