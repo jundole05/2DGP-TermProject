@@ -43,7 +43,7 @@ class Attack:
         self.slime_dir_y = 0
         self.animation_finished = False
 
-    def __exit__(self, e):
+    def exit(self, e):
         pass
 
     def do(self):
@@ -155,7 +155,7 @@ class Slime:
     ]
 
     def __init__(self, slime_type=0, x=100, y=100, draw_w=100, draw_h=100, speed=RUN_SPEED_PPS):
-        idle_path, run_path, death_path = Slime.SLIME_IMAGES[slime_type]
+        idle_path, run_path, death_path, attack_path = Slime.SLIME_IMAGES[slime_type]
         self.idle_image = load_image(idle_path)
         self.run_image = load_image(run_path)
         self.death_image = load_image(death_path)
