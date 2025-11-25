@@ -164,6 +164,10 @@ class Slime:
         root = Selector('추적 또는 배회', chase_character, wander)
         self.bt = BehaviorTree(root)
 
+    def distance_less_than(self, x1, y1, x2, y2, r):
+        distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
+        return distance2 < (r * PIXEL_PER_METER) ** 2
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
