@@ -2,7 +2,7 @@ import random
 from pico2d import *
 import game_world
 import game_framework
-import BehaviorTree
+from behavior_tree import BehaviorTree, Selector, Sequence, Condition, Action
 import common
 
 from state_machine import StateMachine
@@ -136,7 +136,7 @@ class Slime:
         self.dir_x = 0
         self.dir_y = 0
         self.tx, self.ty = x, y
-        self.character = None
+
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.DEATH = Death(self)
@@ -170,9 +170,9 @@ class Slime:
         return distance2 < (r * PIXEL_PER_METER) ** 2
 
     def is_character_nearby(self, distance):
-        if not self.character:
+        if not common.character:
             return BehaviorTree.FAIL
-        if self.distance_less_than(self.character.x, self.character.y, self.x, self.y, distance):
+        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, distance):
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.FAIL
@@ -212,13 +212,13 @@ class Slime:
 
 
     def move_to_character(self, r=1.0):
-        if not self.character:
+        if not common.character:
             return BehaviorTree.FAIL
 
         self.state_machine.handle_state_event(('RUN', None))
-        self.move_little_to(self.character.x, self.character.y)
+        self.move_little_to(common.character.x, common.character.y)
 
-        if self.distance_less_than(self.character.x, self.character.y, self.x, self.y, r):
+        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, r):
             return BehaviorTree.SUCCESS
         else:
             return BehaviorTree.RUNNING
