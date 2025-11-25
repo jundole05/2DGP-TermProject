@@ -168,6 +168,14 @@ class Slime:
         distance2 = (x1 - x2) ** 2 + (y1 - y2) ** 2
         return distance2 < (r * PIXEL_PER_METER) ** 2
 
+    def is_character_nearby(self, distance):
+        if not self.character:
+            return BehaviorTree.FAIL
+        if self.distance_less_than(self.character.x, self.character.y, self.x, self.y, distance):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.FAIL
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
