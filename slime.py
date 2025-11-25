@@ -3,6 +3,7 @@ from pico2d import *
 import game_world
 import game_framework
 import BehaviorTree
+import common
 
 from state_machine import StateMachine
 
