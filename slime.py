@@ -2,7 +2,7 @@ import random
 from pico2d import *
 import game_world
 import game_framework
-
+import BehaviorTree
 
 from state_machine import StateMachine
 
@@ -134,7 +134,8 @@ class Slime:
         self.face_dir = random.randint(0, 3)  # 0:right,1:left,2:up,3:down
         self.dir_x = 0
         self.dir_y = 0
-
+        self.tx, self.ty = x, y
+        self.character = None
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.DEATH = Death(self)
@@ -149,6 +150,9 @@ class Slime:
 
         # 상태 지속 시간 타이머: 처음은 Idle로 시작하므로 IDLE_DURATION
         self.state_timer = IDLE_DURATION
+        self.build_behavior_tree()
+
+
 
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
