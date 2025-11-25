@@ -31,6 +31,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 def run_event(e): return e[0] == 'RUN'
 def idle_event(e): return e[0] == 'IDLE'
 def death_event(e): return e[0] == 'DEATH'
+def attack_event(e): return e[0] == 'ATTACK'
 
 class Idle:
     def __init__(self, slime):
