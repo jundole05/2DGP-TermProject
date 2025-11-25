@@ -43,7 +43,7 @@ def init():
     global startscreen, slimes
     startscreen = load_image("./Resource/startscreen/startscreen.png")
     common.character = Character()
-    game_world.add_object(character, 2)
+    game_world.add_object(common.character, 2)
 
     slimes = spawn_slimes(5)
 
