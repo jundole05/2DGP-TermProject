@@ -196,8 +196,8 @@ class Slime:
         self.build_behavior_tree()
 
     def build_behavior_tree(self):
-        c1 = Condition('캐릭터가 10 이내에 있는가?', self.is_character_nearby, 10)
-        c2 = Condition('캐릭터가 3 이내에 있는가?', self.is_character_nearby, 3)
+        c1 = Condition('캐릭터가 10 이내에 있는가?', self.is_character_nearby, 5)
+        c2 = Condition('캐릭터가 3 이내에 있는가?', self.is_character_nearby, 2)
         a1 = Action('캐릭터 공격', self.attack_character)
         a2 = Action('캐릭터 추적', self.move_to_character)
 
@@ -258,12 +258,12 @@ class Slime:
         else:
             return BehaviorTree.RUNNING
 
-    def move_to_character(self, r=3.0):
+    def move_to_character(self, r=2.0):
         if not common.character:
             return BehaviorTree.FAIL
 
         # 3 이내면 공격으로 전환
-        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 3):
+        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 2):
             return BehaviorTree.SUCCESS
 
         self.state_machine.handle_state_event(('RUN', None))
@@ -285,7 +285,7 @@ class Slime:
             return BehaviorTree.RUNNING
 
         # 공격 애니메이션 완료 후 거리 확인
-        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 3):
+        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 2):
             # 3 이내면 공격 반복 (새로운 공격 시작)
             self.state_machine.cur_state.enter(None)  # 애니메이션 초기화
             return BehaviorTree.RUNNING
