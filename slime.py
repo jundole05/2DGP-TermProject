@@ -56,11 +56,14 @@ class Attack:
 
     def draw(self):
         img = self.slime.attack_image
+        # 공격 시 1.5배 크게 그리기
+        attack_w = self.slime.draw_w * 2.0
+        attack_h = self.slime.draw_h * 2.0
         img.clip_draw(int(self.slime.frame) * FRAME_W,
                       self.slime.face_dir * FRAME_H,
                       FRAME_W, FRAME_H,
                       self.slime.x, self.slime.y,
-                      self.slime.draw_w, self.slime.draw_h)
+                      attack_w, attack_h)
 
 
 class Idle:
