@@ -267,6 +267,29 @@ class Slime:
         else:
             return BehaviorTree.RUNNING
 
+    def attack_character(self):
+        if not common.character:
+            return BehaviorTree.FAIL
+
+        # Attack 상태로 전환
+        if self.state_machine.cur_state != self.ATTACK:
+            self.state_machine.handle_state_event(('ATTACK', None))
+            return BehaviorTree.RUNNING
+
+        # 공격 애니메이션 완료 확인
+        if self.state_machine.cur_state.animation_finished:
+            # 거리 확인 후 상태 결정
+            if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 3):
+                # 3 이내면 공격 반복
+                self.state_machine.handle_state_event(('ATTACK', None))
+            elif self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 10):
+                # 10~3 사이면 추적
+                return BehaviorTree.SUCCESS
+
+        return BehaviorTree.RUNNING
+
+
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
 
