@@ -280,8 +280,9 @@ class Slime:
         if self.state_machine.cur_state.animation_finished:
             # 거리 확인 후 상태 결정
             if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 3):
-                # 3 이내면 공격 반복
-                self.state_machine.handle_state_event(('ATTACK', None))
+                # 3 이내면 공격 반복 (새로운 공격 시작)
+                self.state_machine.cur_state.enter(None)  # 애니메이션 초기화
+                return BehaviorTree.RUNNING
             elif self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 10):
                 # 10~3 사이면 추적
                 return BehaviorTree.SUCCESS
