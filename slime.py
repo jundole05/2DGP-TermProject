@@ -181,6 +181,24 @@ class Slime:
         self.ty = random.randint(100, 900)
         return BehaviorTree.SUCCESS
 
+    def move_little_to(self, tx, ty):
+        dx = tx - self.x
+        dy = ty - self.y
+        distance = math.sqrt(dx**2 + dy**2)
+
+        if distance > 0:
+            self.dir_x = dx / distance
+            self.dir_y = dy / distance
+
+            if abs(dx) > abs(dy):
+                self.face_dir = 0 if dx > 0 else 1
+            else:
+                self.face_dir = 2 if dy > 0 else 3
+
+            move_distance = self.speed * game_framework.frame_time
+            self.x += self.dir_x * move_distance
+            self.y += self.dir_y * move_distance
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
