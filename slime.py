@@ -199,6 +199,16 @@ class Slime:
             self.x += self.dir_x * move_distance
             self.y += self.dir_y * move_distance
 
+    def move_to_target(self, r=0.5):
+        self.state_machine.handle_state_event(('RUN', None))
+        self.move_little_to(self.tx, self.ty)
+
+        if self.distance_less_than(self.tx, self.ty, self.x, self.y, r):
+            self.state_machine.handle_state_event(('IDLE', None))
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
