@@ -152,7 +152,17 @@ class Slime:
         self.state_timer = IDLE_DURATION
         self.build_behavior_tree()
 
+    def build_behavior_tree(self):
+        c1 = Condition('캐릭터가 근처에 있는가?', self.is_character_nearby, 7)
+        a1 = Action('캐릭터 추적', self.move_to_character)
+        chase_character = Sequence('캐릭터 추적', c1, a1)
 
+        a2 = Action('랜덤 위치 설정', self.set_random_location)
+        a3 = Action('목표 위치로 이동', self.move_to_target)
+        wander = Sequence('배회', a2, a3)
+
+        root = Selector('추적 또는 배회', chase_character, wander)
+        self.bt = BehaviorTree(root)
 
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
