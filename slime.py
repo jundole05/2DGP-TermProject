@@ -254,18 +254,18 @@ class Slime:
         else:
             return BehaviorTree.RUNNING
 
-
-    def move_to_character(self, r=1.0):
+    def move_to_character(self, r=3.0):
         if not common.character:
             return BehaviorTree.FAIL
+
+        # 3 이내면 공격으로 전환
+        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 3):
+            return BehaviorTree.SUCCESS
 
         self.state_machine.handle_state_event(('RUN', None))
         self.move_little_to(common.character.x, common.character.y)
 
-        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, r):
-            return BehaviorTree.SUCCESS
-        else:
-            return BehaviorTree.RUNNING
+        return BehaviorTree.RUNNING
 
     def attack_character(self):
         if not common.character:
