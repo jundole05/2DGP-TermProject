@@ -209,6 +209,19 @@ class Slime:
         else:
             return BehaviorTree.RUNNING
 
+
+    def move_to_character(self, r=1.0):
+        if not self.character:
+            return BehaviorTree.FAIL
+
+        self.state_machine.handle_state_event(('RUN', None))
+        self.move_little_to(self.character.x, self.character.y)
+
+        if self.distance_less_than(self.character.x, self.character.y, self.x, self.y, r):
+            return BehaviorTree.SUCCESS
+        else:
+            return BehaviorTree.RUNNING
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
