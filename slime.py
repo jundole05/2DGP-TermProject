@@ -21,7 +21,7 @@ IDLE_DURATION = 3.0
 RUN_DURATION = 2.0
 
 PIXEL_PER_METER = (10.0 / 0.3)
-RUN_SPEED_KMPH = 20.0
+RUN_SPEED_KMPH = 5.0
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -154,7 +154,7 @@ class Slime:
         self.build_behavior_tree()
 
     def build_behavior_tree(self):
-        c1 = Condition('캐릭터가 근처에 있는가?', self.is_character_nearby, 7)
+        c1 = Condition('캐릭터가 근처에 있는가?', self.is_character_nearby, 5)
         a1 = Action('캐릭터 추적', self.move_to_character)
         chase_character = Sequence('캐릭터 추적', c1, a1)
 
