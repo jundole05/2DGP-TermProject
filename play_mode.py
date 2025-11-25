@@ -3,6 +3,7 @@ from pico2d import *
 
 import game_framework
 import game_world
+import common
 from character import Character
 from slime import spawn_slimes
 from background import Background
