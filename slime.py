@@ -176,6 +176,11 @@ class Slime:
         else:
             return BehaviorTree.FAIL
 
+    def set_random_location(self):
+        self.tx = random.randint(100, 1500)
+        self.ty = random.randint(100, 900)
+        return BehaviorTree.SUCCESS
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
