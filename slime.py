@@ -224,20 +224,19 @@ class Slime:
 
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
+
+        # Death 상태일 때는 BT 실행 안함
+        if self.state_machine.cur_state == self.DEATH:
+            self.state_machine.update()
+            return
+
+        # Behavior Tree 실행
+        self.bt.run()
         self.state_machine.update()
 
-        # Death 상태가 아닐 때만 자동 상태 전환
-        cur = self.state_machine.cur_state
-        if cur != self.DEATH:
-            self.state_timer -= game_framework.frame_time
-            if self.state_timer <= 0:
-                if cur == self.IDLE:
-                    self.face_dir = random.randint(0, 3)
-                    self.state_machine.handle_state_event(('RUN', None))
-                    self.state_timer = RUN_DURATION
-                elif cur == self.RUN:
-                    self.state_machine.handle_state_event(('IDLE', None))
-                    self.state_timer = IDLE_DURATION
+        # 화면 경계 체크
+        self.x = max(50, min(self.x, 1600 - 50))
+        self.y = max(50, min(self.y, 900 - 50))
 
     def draw(self):
         self.state_machine.draw()
