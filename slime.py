@@ -39,8 +39,8 @@ class Attack:
 
     def enter(self, e):
         self.slime.frame = 0
-        self.slime_dir_x = 0
-        self.slime_dir_y = 0
+        self.slime.dir_x = 0
+        self.slime.dir_y = 0
         self.animation_finished = False
 
     def exit(self, e):
@@ -48,7 +48,8 @@ class Attack:
 
     def do(self):
         if not self.animation_finished:
-            self.slime.frame += ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time
+            attack_action_per_time = 0.5 / ATTACK_DURATION
+            self.slime.frame += ATTACK_FRAMES * attack_action_per_time * game_framework.frame_time
             if self.slime.frame >= ATTACK_FRAMES:
                 self.slime.frame = ATTACK_FRAMES - 1
                 self.animation_finished = True
@@ -276,18 +277,18 @@ class Slime:
             self.state_machine.handle_state_event(('ATTACK', None))
             return BehaviorTree.RUNNING
 
-        # 공격 애니메이션 완료 확인
-        if self.state_machine.cur_state.animation_finished:
-            # 거리 확인 후 상태 결정
-            if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 3):
-                # 3 이내면 공격 반복 (새로운 공격 시작)
-                self.state_machine.cur_state.enter(None)  # 애니메이션 초기화
-                return BehaviorTree.RUNNING
-            elif self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 10):
-                # 10~3 사이면 추적
-                return BehaviorTree.SUCCESS
+        # 공격 애니메이션이 진행 중이면 무조건 RUNNING 반환 (애니메이션 완료까지 대기)
+        if not self.state_machine.cur_state.animation_finished:
+            return BehaviorTree.RUNNING
 
-        return BehaviorTree.RUNNING
+        # 공격 애니메이션 완료 후 거리 확인
+        if self.distance_less_than(common.character.x, common.character.y, self.x, self.y, 3):
+            # 3 이내면 공격 반복 (새로운 공격 시작)
+            self.state_machine.cur_state.enter(None)  # 애니메이션 초기화
+            return BehaviorTree.RUNNING
+        else:
+            # 3 이상이면 공격 종료 (추적 또는 배회로 전환)
+            return BehaviorTree.SUCCESS
 
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
