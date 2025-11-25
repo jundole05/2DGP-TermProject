@@ -287,6 +287,24 @@ class Character:
 
     def handle_collision(self, group, other):
         if group == 'character:slime':
+            # 충돌 방향 감지
+            dx = self.x - other.x
+            dy = self.y - other.y
 
-            self.x, self.y = self.prev_x, self.prev_y
-        pass
+            # 절대값으로 충돌이 더 큰 축 결정
+            if abs(dx) > abs(dy):
+                # 좌우 충돌
+                if dx > 0:
+                    # 캐릭터가 오른쪽에 있음 -> 오른쪽으로 밀어냄
+                    self.x = other.x + other.draw_w / 2 + self.draw_w / 2
+                else:
+                    # 캐릭터가 왼쪽에 있음 -> 왼쪽으로 밀어냄
+                    self.x = other.x - other.draw_w / 2 - self.draw_w / 2
+            else:
+                # 상하 충돌
+                if dy > 0:
+                    # 캐릭터가 위쪽에 있음 -> 위쪽으로 밀어냄
+                    self.y = other.y + other.draw_h / 2 + self.draw_h / 2
+                else:
+                    # 캐릭터가 아래쪽에 있음 -> 아래쪽으로 밀어냄
+                    self.y = other.y - other.draw_h / 2 - self.draw_h / 2
