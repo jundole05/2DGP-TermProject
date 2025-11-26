@@ -188,6 +188,7 @@ class Attack:
 
     def do(self):
         self.character.frame += ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time
+        self.attack_bb = self.get_attack_bb()
         if self.character.frame >= ATTACK_FRAMES:
             if self.prev_state == Idle:
                 self.character.state_machine.change_state(self.character.IDLE)
