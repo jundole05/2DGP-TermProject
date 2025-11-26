@@ -281,11 +281,12 @@ class Character:
     def get_bb(self):
         return self.x - 25, self.y - 40, self.x + 25, self.y + 35
 
-    def get_attack_BB(self):
-        return self.state_machine.cur_state.get.attack_bb()
+    def get_attack_bb(self):
+        if isinstance(self.state_machine.cur_state, Attack):
+            return self.state_machine.cur_state.get_attack_bb()
 
     def handle_collision(self, group, other):
         if group == 'character:slime':
             self.x, self.y = self.prev_x, self.prev_y
         elif group == 'attack:slime':
-        pass
+            pass
