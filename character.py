@@ -166,7 +166,7 @@ class Attack:
 
     def enter(self, e):
         self.character.frame = 0
-        self. timer = 0
+        self.timer = 0
         self.prev_state = type(self.character.state_machine.cur_state)
 
     def exit(self, e):
@@ -280,6 +280,9 @@ class Character:
 
     def get_bb(self):
         return self.x - 25, self.y - 40, self.x + 25, self.y + 35
+
+    def get_attack_BB(self):
+        return self.state_machine.cur_state.get.attack_bb()
 
     def handle_collision(self, group, other):
         if group == 'character:slime':
