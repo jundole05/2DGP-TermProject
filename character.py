@@ -170,6 +170,7 @@ class Attack:
         self.prev_state = type(self.character.state_machine.cur_state)
 
     def exit(self, e):
+        self.attack_bb = None
         pass
 
     def do(self):
