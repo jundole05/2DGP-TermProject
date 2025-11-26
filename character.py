@@ -162,6 +162,7 @@ class Attack:
         self.character = character
         self.image = load_image('./Resource/character/Lv1/attack.png')
         self.timer = 0
+        self.attack_bb = None
 
     def enter(self, e):
         self.character.frame = 0

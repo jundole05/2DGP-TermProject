@@ -301,6 +301,11 @@ class Slime:
             self.state_machine.update()
             return
 
+        # Attack 상태이고 애니메이션이 진행 중이면 BT 실행 안 함
+        if self.state_machine.cur_state == self.ATTACK and not self.state_machine.cur_state.animation_finished:
+            self.state_machine.update()
+            return
+
         # Behavior Tree 실행
         self.bt.run()
         self.state_machine.update()
