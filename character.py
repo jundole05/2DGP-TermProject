@@ -201,29 +201,7 @@ class Attack:
             draw_rectangle(*self.attack_bb)
 
     def handle_event(self, e):
-        if up_down(e):
-            self.character.key_up = True
-            self.character.face_dir = 0
-        elif up_up(e):
-            self.character.key_up = False
 
-        if down_down(e):
-            self.character.key_down = True
-            self.character.face_dir = 3
-        elif down_up(e):
-            self.character.key_down = False
-
-        if right_down(e):
-            self.character.key_right = True
-            self.character.face_dir = 1
-        elif right_up(e):
-            self.character.key_right = False
-
-        if left_down(e):
-            self.character.key_left = True
-            self.character.face_dir = 2
-        elif left_up(e):
-            self.character.key_left = False
         pass
 
 class Death:
