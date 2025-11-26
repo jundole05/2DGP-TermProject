@@ -178,13 +178,13 @@ class Attack:
         bb_extend = 10
 
         if self.character.face_dir == 0:  # Up
-            return (char_x - 50, char_y, char_x + 50, char_y ++ bb_extend)
+            return (char_x - 25 , char_y + 25, char_x + 25, char_y + 35 + bb_extend)
         elif self.character.face_dir == 1:  # Right
-            return (char_x, char_y - 50, char_x + bb_extend, char_y + 50)
-        elif self.character.face_dir == 2:  # 아래쪽
-            return (char_x - 50, char_y - bb_extend, char_x + 50, char_y)
-        elif self.character.face_dir == 3:  # Left
-            return (char_x - bb_extend, char_y - 50, char_x, char_y + 50)
+            return (char_x + 25, char_y - 40, char_x + 40 + bb_extend, char_y + 35)
+        elif self.character.face_dir == 2:  # 왼쪽
+            return (char_x - 40 - bb_extend , char_y - 40, char_x - 25, char_y + 35)
+        elif self.character.face_dir == 3:  # 아래쪽
+            return (char_x - 25, char_y - 45 - bb_extend, char_x + 25, char_y - 35)
 
     def do(self):
         self.character.frame += ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time
