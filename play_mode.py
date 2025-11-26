@@ -33,6 +33,19 @@ def handle_events():
             else:
                 common.character.handle_event(event)
 
+def check_attack_collision():
+    if isinstance(common.character.state_machine.cur_state, common.character.ATTACK.__class__):
+        attack_state = common.character.state_machine.cur_state
+        if attack_state.attack_bb:
+            attack_left, attack_bottom, attack_right, attack_top = attack_state.attack_bb
+            for slime in slimes:
+                slime_left, slime_bottom, slime_right, slime_top = slime.get_bb()
+
+                # 바운딩박스 충돌 검사
+                if not (attack_right < slime_left or attack_left > slime_right or
+                        attack_top < slime_bottom or attack_bottom > slime_top):
+                    # 충돌 발생 - 슬라임을 death 상태로 변경
+                    slime.state_machine.handle_state_event(('DEATH', None))
 def add_background():
     global background
     if background is None:
@@ -47,9 +60,12 @@ def init():
 
     slimes = spawn_slimes(5)
 
+
     game_world.add_collision_pair('character:slime', common.character, None)
+    game_world.add_collision_pair('attack:slime', common.character, None)
     for slime in slimes:
         game_world.add_collision_pair('character:slime', None, slime)
+        game_world.add_collision_pair('attack:slime', None, slime)
     pass
 
 def update():
