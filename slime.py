@@ -327,6 +327,11 @@ class Slime:
         if group == 'character:slime':
             self.x = self.prev_x
             self.y = self.prev_y
+        elif group == 'attack:slime':
+            if self.state_machine.cur_state != self.DEATH:
+                attack_bb = other.get_attack_bb()
+                if attack_bb:
+                    self.state_machine.handle_state_event(('DEATH', None))
         pass
 
 
