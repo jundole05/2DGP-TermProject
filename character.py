@@ -197,6 +197,8 @@ class Attack:
 
     def draw(self):
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
+        if self.attack_bb:
+            draw_rectangle(*self.attack_bb)
 
     def handle_event(self, e):
         if up_down(e):
