@@ -173,6 +173,19 @@ class Attack:
         self.attack_bb = None
         pass
 
+    def get_attack_bb(self):
+        char_x, char_y = self.character.x, self.character.y
+        bb_extend = 10
+
+        if self.character.face_dir == 0:  # Up
+            return (char_x - 50, char_y, char_x + 50, char_y ++ bb_extend)
+        elif self.character.face_dir == 1:  # Right
+            return (char_x, char_y - 50, char_x + bb_extend, char_y + 50)
+        elif self.character.face_dir == 2:  # 아래쪽
+            return (char_x - 50, char_y - bb_extend, char_x + 50, char_y)
+        elif self.character.face_dir == 3:  # Left
+            return (char_x - bb_extend, char_y - 50, char_x, char_y + 50)
+
     def do(self):
         self.character.frame += ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time
         if self.character.frame >= ATTACK_FRAMES:
