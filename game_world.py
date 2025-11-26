@@ -65,7 +65,19 @@ def handle_collisions():
     for group, pairs in collision_pairs.items():
         for a in pairs[0]:
             for b in pairs [1]:
-                if collide(a, b):
-                    a.handle_collision(group, b) # 충돌이 왜, 누구랑 일어났는지 알려줌
-                    b.handle_collision(group, a)
+                # 어택인경우
+                if group == 'attack:slime':
+                    attack_bb = a.get_attack_bb()
+                    if attack_bb:
+                        attack_left, attack_bottom, attack_right, attack_top = attack_bb
+                        slime_left, slime_bottom, slime_right, slime_top = b.get_bb()
+
+                        if not (attack_right < slime_left or attack_left > slime_right or
+                        attack_top < slime_bottom or attack_bottom > slime_top):
+                            a.handle_collision(group, b) # 충돌이 왜, 누구랑 일어났는지 알려줌
+                            b.handle_collision(group, a)
+                else:
+                    if collide(a, b):
+                        a.handle_collision(group, b) # 충돌이 왜, 누구랑 일어났는지 알려줌
+                        b.handle_collision(group, a)
     return None
