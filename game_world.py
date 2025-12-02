@@ -61,11 +61,9 @@ def add_collision_pair(group, a, b):
         collision_pairs[group][1].append(b)
 
 def handle_collisions():
-    # 등록된 모든 충돌 그웁에 대해 충돌 검사 수행
     for group, pairs in collision_pairs.items():
         for a in pairs[0]:
-            for b in pairs [1]:
-                # 어택인경우
+            for b in pairs[1]:
                 if group == 'attack:slime':
                     attack_bb = a.get_attack_bb()
                     if attack_bb:
@@ -74,10 +72,19 @@ def handle_collisions():
 
                         if not (attack_right < slime_left or attack_left > slime_right or
                         attack_top < slime_bottom or attack_bottom > slime_top):
-                            a.handle_collision(group, b) # 충돌이 왜, 누구랑 일어났는지 알려줌
+                            a.handle_collision(group, b)
+                            b.handle_collision(group, a)
+                elif group == 'slime_attack:character':
+                    slime_attack_bb = a.get_attack_bb()
+                    if slime_attack_bb:
+                        slime_left, slime_bottom, slime_right, slime_top = slime_attack_bb
+                        char_left, char_bottom, char_right, char_top = b.get_bb()
+
+                        if not (slime_right < char_left or slime_left > char_right or
+                        slime_top < char_bottom or slime_bottom > char_top):
+                            a.handle_collision(group, b)
                             b.handle_collision(group, a)
                 else:
                     if collide(a, b):
-                        a.handle_collision(group, b) # 충돌이 왜, 누구랑 일어났는지 알려줌
+                        a.handle_collision(group, b)
                         b.handle_collision(group, a)
-    return None
