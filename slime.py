@@ -46,6 +46,18 @@ class Attack:
     def exit(self, e):
         pass
 
+    def get_attack_bb(self):
+        # 6프레임부터 10프레임까지만 바운딩박스 생성
+        if self.slime.frame < 6 or self.slime.frame >= 10:
+            return None
+
+        slime_left, slime_bottom, slime_right, slime_top = self.slime.get_bb()
+        bb_extend = 20
+
+        # 슬라임의 바운딩박스보다 조금 크게
+        return (slime_left - bb_extend, slime_bottom - bb_extend,
+                slime_right + bb_extend, slime_top + bb_extend)
+
     def do(self):
         if not self.animation_finished:
             attack_action_per_time = 0.5 / ATTACK_DURATION
