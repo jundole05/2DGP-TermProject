@@ -76,6 +76,9 @@ class Attack:
                       FRAME_W, FRAME_H,
                       self.slime.x, self.slime.y,
                       attack_w, attack_h)
+        attack_bb = self.get_attack_bb()
+        if attack_bb:
+            draw_rectangle(*attack_bb)
 
 
 class Idle:
