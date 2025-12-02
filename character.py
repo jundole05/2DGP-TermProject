@@ -275,13 +275,15 @@ class Character:
         self.RUN = Run(self)
         self.ATTACK = Attack(self)
         self.DEATH = Death(self)
+        self.HURT = Hurt(self)
         self.state_machine = StateMachine(
             self.IDLE,
             {
                 self.IDLE: {any_key_down: self.RUN, space_down: self.ATTACK, one_down: self.DEATH},
                 self.RUN: {any_key_up: self.IDLE, space_down: self.ATTACK, one_down: self.DEATH},
                 self.ATTACK: {one_down: self.DEATH},
-                self.DEATH: {one_down: self.IDLE}
+                self.DEATH: {one_down: self.IDLE},
+                self.HURT: {}
             }
         )
 
@@ -318,3 +320,6 @@ class Character:
             self.x, self.y = self.prev_x, self.prev_y
         elif group == 'attack:slime':
             pass
+        elif group == 'slime_attack:character':
+            if self.state_machine.cur_state != self.HURT and self.state_machine.cur_state != self.DEATH:
+                self.state_machine.change_state(self.HURT)
