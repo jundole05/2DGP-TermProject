@@ -338,6 +338,11 @@ class Slime:
         half_h = self.draw_h / 2 - 30
         return (self.x - half_w, self.y - half_h, self.x + half_w, self.y + half_h)
 
+    def get_attack_bb(self):
+        if isinstance(self.state_machine.cur_state, Attack):
+            return self.state_machine.cur_state.get_attack_bb()
+        return None
+
     def handle_collision(self, group, other):
         if group == 'character:slime':
             self.x = self.prev_x
