@@ -246,11 +246,12 @@ class Hurt:
     def do(self):
         if not self.animation_finished:
             hurt_frames = 5
-            self.character.frame += hurt_frames * ACTION_PER_TIME * game_framework.frame_time
+            # ACTION_PER_TIME 대신 더 작은 값을 사용하여 애니메이션 속도를 늦춤
+            hurt_action_per_time = ACTION_PER_TIME * 0.8  # 0.3을 조정하여 속도 변경 (작을수록 느림)
+            self.character.frame += hurt_frames * hurt_action_per_time * game_framework.frame_time
             if self.character.frame >= hurt_frames:
                 self.character.frame = hurt_frames - 1
                 self.animation_finished = True
-                # 애니메이션 끝나면 Idle로 전환
                 self.character.state_machine.change_state(self.character.IDLE)
 
     def draw(self):
