@@ -229,6 +229,34 @@ class Death:
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x,
                              self.character.y, 150, 150)
 
+class Hurt:
+    def __init__(self, character):
+        self.character = character
+        self.image = load_image('./Resource/character/Lv1/hurt.png')
+
+    def enter(self, e):
+        self.character.frame = 0
+        self.character.dir_x = 0
+        self.character.dir_y = 0
+        self.animation_finished = False
+
+    def exit(self, e):
+        pass
+
+    def do(self):
+        if not self.animation_finished:
+            hurt_frames = 5
+            self.character.frame += hurt_frames * ACTION_PER_TIME * game_framework.frame_time
+            if self.character.frame >= hurt_frames:
+                self.character.frame = hurt_frames - 1
+                self.animation_finished = True
+                # 애니메이션 끝나면 Idle로 전환
+                self.character.state_machine.change_state(self.character.IDLE)
+
+    def draw(self):
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64,
+                             self.character.x, self.character.y, 150, 150)
+
 class Character:
     def __init__(self):
         self.x, self.y = 500, 500
