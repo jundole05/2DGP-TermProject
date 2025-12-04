@@ -192,6 +192,10 @@ class Slime:
         self.dir_y = 0
         self.tx, self.ty = x, y
 
+        # 체력 시스템 추가
+        self.max_hp = 3
+        self.current_hp = 3
+
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.DEATH = Death(self)
@@ -209,6 +213,28 @@ class Slime:
         # 상태 지속 시간 타이머: 처음은 Idle로 시작하므로 IDLE_DURATION
         self.state_timer = IDLE_DURATION
         self.build_behavior_tree()
+
+    def draw_hp_bar(self):
+        # 체력바 위치 (슬라임 위)
+        bar_x = self.x
+        bar_y = self.y + 60
+        bar_width = 50
+        bar_height = 6
+
+        # 배경 검은색 바
+        draw_rectangle(bar_x - bar_width // 2, bar_y - bar_height // 2,
+                       bar_x + bar_width // 2, bar_y + bar_height // 2)
+
+        # 체력 비율 계산
+        hp_ratio = self.current_hp / self.max_hp
+        current_bar_width = bar_width * hp_ratio
+
+        # 체력 바 (빨간색)
+        if self.current_hp > 0:
+            for i in range(int(bar_height)):
+                draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
+                          bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i)
+
 
     def build_behavior_tree(self):
         c1 = Condition('캐릭터가 10 이내에 있는가?', self.is_character_nearby, 5)
@@ -332,6 +358,7 @@ class Slime:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
+        self.draw_hp_bar()
 
     def get_bb(self):
         half_w = self.draw_w / 2 - 30
@@ -351,7 +378,10 @@ class Slime:
             if self.state_machine.cur_state != self.DEATH:
                 attack_bb = other.get_attack_bb()
                 if attack_bb:
-                    self.state_machine.handle_state_event(('DEATH', None))
+                    self.current_hp -= 1
+                    if self.current_hp <= 0:
+                        self.current_hp = 0
+                        self.state_machine.handle_state_event(('DEATH', None))
         pass
 
 
