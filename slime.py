@@ -16,6 +16,7 @@ ATTACK_FRAMES = 10
 FRAME_W = 64
 FRAME_H = 64
 DEATH_FRAMES = 10
+HURT_FRAMES = 5
 
 # durations
 IDLE_DURATION = 3.0
@@ -32,6 +33,37 @@ def run_event(e): return e[0] == 'RUN'
 def idle_event(e): return e[0] == 'IDLE'
 def death_event(e): return e[0] == 'DEATH'
 def attack_event(e): return e[0] == 'ATTACK'
+def hurt_event(e): return e[0] == 'HURT'
+
+class Hurt:
+    def __init__(self, slime):
+        self.slime = slime
+
+    def enter(self, e):
+        self.slime.frame = 0
+        self.slime.dir_x = 0
+        self.slime.dir_y = 0
+        self.animation_finished = False
+
+    def exit(self, e):
+        pass
+
+    def do(self):
+        if not self.animation_finished:
+            hurt_action_per_time = ACTION_PER_TIME * 0.8
+            self.slime.frame += HURT_FRAMES * hurt_action_per_time * game_framework.frame_time
+            if self.slime.frame >= HURT_FRAMES:
+                self.slime.frame = HURT_FRAMES - 1
+                self.animation_finished = True
+                self.slime.state_machine.change_state(self.slime.IDLE)
+
+    def draw(self):
+        img = self.slime.hurt_image
+        img.clip_draw(int(self.slime.frame) * FRAME_W,
+                      self.slime.face_dir * FRAME_H,
+                      FRAME_W, FRAME_H,
+                      self.slime.x, self.slime.y,
+                      self.slime.draw_w, self.slime.draw_h)
 
 class Attack:
     def __init__(self, slime):
@@ -166,19 +198,20 @@ class Death:
 class Slime:
     SLIME_IMAGES = [
         ('./Resource/slime/Slime1/idle.png', './Resource/slime/Slime1/run.png', './Resource/slime/Slime1/death.png',
-         './Resource/slime/Slime1/attack.png'),
+         './Resource/slime/Slime1/attack.png', './Resource/slime/Slime1/hurt.png'),
         ('./Resource/slime/Slime2/idle.png', './Resource/slime/Slime2/run.png', './Resource/slime/Slime2/death.png',
-         './Resource/slime/Slime2/attack.png'),
+         './Resource/slime/Slime2/attack.png', './Resource/slime/Slime2/hurt.png'),
         ('./Resource/slime/Slime3/idle.png', './Resource/slime/Slime3/run.png', './Resource/slime/Slime3/death.png',
-         './Resource/slime/Slime3/attack.png'),
+         './Resource/slime/Slime3/attack.png', './Resource/slime/Slime3/hurt.png'),
     ]
 
     def __init__(self, slime_type=0, x=100, y=100, draw_w=100, draw_h=100, speed=RUN_SPEED_PPS):
-        idle_path, run_path, death_path, attack_path = Slime.SLIME_IMAGES[slime_type]
+        idle_path, run_path, death_path, attack_path, hurt_path = Slime.SLIME_IMAGES[slime_type]
         self.idle_image = load_image(idle_path)
         self.run_image = load_image(run_path)
         self.death_image = load_image(death_path)
         self.attack_image = load_image(attack_path)
+        self.hurt_image = load_image(hurt_path)
 
         self.x, self.y = x, y
         self.prev_x, self.prev_y = x, y
@@ -201,13 +234,15 @@ class Slime:
         self.RUN = Run(self)
         self.DEATH = Death(self)
         self.ATTACK = Attack(self)
+        self.HURT = Hurt(self)
         self.state_machine = StateMachine(
             self.IDLE,
             {
                 self.IDLE: {run_event: self.RUN, death_event: self.DEATH, attack_event: self.ATTACK},
                 self.RUN: {idle_event: self.IDLE, death_event: self.DEATH, attack_event: self.ATTACK},
                 self.ATTACK: {run_event: self.RUN, idle_event: self.IDLE, death_event: self.DEATH},
-                self.DEATH: {death_event: self.IDLE}
+                self.DEATH: {death_event: self.IDLE},
+                self.HURT: {}
             }
         )
 
@@ -339,8 +374,8 @@ class Slime:
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
 
-        # Death나 Attack 상태일 때는 BT 실행 조정
-        if self.state_machine.cur_state == self.DEATH:
+        # Death나 Hurt 상태일 때는 BT 실행 안 함
+        if self.state_machine.cur_state in (self.DEATH, self.HURT):
             self.state_machine.update()
             return
 
@@ -377,14 +412,16 @@ class Slime:
             self.x = self.prev_x
             self.y = self.prev_y
         elif group == 'attack:slime':
-            if self.state_machine.cur_state != self.DEATH and not self.is_hit:
+            if self.state_machine.cur_state != self.DEATH and self.state_machine.cur_state != self.HURT and not self.is_hit:
                 attack_bb = other.get_attack_bb()
                 if attack_bb:
                     self.current_hp -= 1
-                    self.is_hit = True  # 이번 공격에 맞았음을 표시
+                    self.is_hit = True
                     if self.current_hp <= 0:
                         self.current_hp = 0
                         self.state_machine.handle_state_event(('DEATH', None))
+                    else:
+                        self.state_machine.change_state(self.HURT)
         pass
 
 
