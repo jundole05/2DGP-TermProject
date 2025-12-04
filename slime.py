@@ -222,9 +222,10 @@ class Slime:
         bar_width = 50
         bar_height = 6
 
-        # 배경 검은색 바
-        draw_rectangle(bar_x - bar_width // 2, bar_y - bar_height // 2,
-                       bar_x + bar_width // 2, bar_y + bar_height // 2)
+        # 배경 (검은색 바) - 가로로 여러 줄 그려서 채우기
+        for i in range(int(bar_height)):
+            draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
+                      bar_x + bar_width // 2, bar_y - bar_height // 2 + i)
 
         # 체력 비율 계산
         hp_ratio = self.current_hp / self.max_hp
@@ -234,7 +235,7 @@ class Slime:
         if self.current_hp > 0:
             for i in range(int(bar_height)):
                 draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
-                          bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i)
+                          bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i, 255, 0, 0)
 
 
     def build_behavior_tree(self):

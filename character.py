@@ -302,17 +302,18 @@ class Character:
         bar_width = 60
         bar_height = 8
 
-        # 배경 검은색 바
-        draw_rectangle(bar_x - bar_width // 2, bar_y - bar_height // 2,
-                       bar_x + bar_width // 2, bar_y + bar_height // 2)
-
         # 체력 비율 계산
         hp_ratio = self.current_hp / self.max_hp
         current_bar_width = bar_width * hp_ratio
 
-        # 체력 빨간색 바
+        for i in range(int(bar_height)):
+            draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
+                      bar_x + bar_width // 2, bar_y - bar_height // 2 + i)
+
+        # 체력 바
         if self.current_hp > 0:
             for i in range(int(bar_height)):
+
                 draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
                           bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i, 255, 0, 0)
 
