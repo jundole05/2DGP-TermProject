@@ -272,6 +272,10 @@ class Character:
         self.key_left = False
         self.key_right = False
 
+        # 체력 시스템 추가
+        self.max_hp = 10
+        self.current_hp = 10
+
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.ATTACK = Attack(self)
@@ -287,6 +291,27 @@ class Character:
                 self.HURT: {}
             }
         )
+
+    def draw_hp_bar(self):
+        # 체력바 위치
+        bar_x = self.x
+        bar_y = self.y + 60
+        bar_width = 60
+        bar_height = 8
+
+        # 배경 검은색 바
+        draw_rectangle(bar_x - bar_width // 2, bar_y - bar_height // 2,
+                       bar_x + bar_width // 2, bar_y + bar_height // 2)
+
+        # 체력 비율 계산
+        hp_ratio = self.current_hp / self.max_hp
+        current_bar_width = bar_width * hp_ratio
+
+        # 체력 빨간색 바
+        if self.current_hp > 0:
+            for i in range(int(bar_height)):
+                draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
+                          bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i)
 
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
@@ -308,6 +333,7 @@ class Character:
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
+        self.draw_hp_bar()
 
     def get_bb(self):
         return self.x - 25, self.y - 40, self.x + 25, self.y + 35
@@ -323,4 +349,9 @@ class Character:
             pass
         elif group == 'slime_attack:character':
             if self.state_machine.cur_state != self.HURT and self.state_machine.cur_state != self.DEATH:
-                self.state_machine.change_state(self.HURT)
+                self.current_hp -= 1
+                if self.current_hp <= 0:
+                    self.current_hp = 0
+                    self.state_machine.change_state(self.DEATH)
+                else:
+                    self.state_machine.change_state(self.HURT)
