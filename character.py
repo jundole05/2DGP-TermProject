@@ -168,6 +168,9 @@ class Attack:
         self.character.frame = 0
         self.timer = 0
         self.prev_state = type(self.character.state_machine.cur_state)
+        for obj in game_world.world[1]:  # 슬라임이 있는 레이어
+            if hasattr(obj, 'is_hit'):
+                obj.is_hit = False
 
     def exit(self, e):
         self.attack_bb = None
@@ -311,7 +314,7 @@ class Character:
         if self.current_hp > 0:
             for i in range(int(bar_height)):
                 draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
-                          bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i)
+                          bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i, 255, 0, 0)
 
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y

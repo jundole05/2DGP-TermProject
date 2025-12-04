@@ -195,6 +195,7 @@ class Slime:
         # 체력 시스템 추가
         self.max_hp = 3
         self.current_hp = 3
+        self.is_hit = False
 
         self.IDLE = Idle(self)
         self.RUN = Run(self)
@@ -375,10 +376,11 @@ class Slime:
             self.x = self.prev_x
             self.y = self.prev_y
         elif group == 'attack:slime':
-            if self.state_machine.cur_state != self.DEATH:
+            if self.state_machine.cur_state != self.DEATH and not self.is_hit:
                 attack_bb = other.get_attack_bb()
                 if attack_bb:
                     self.current_hp -= 1
+                    self.is_hit = True  # 이번 공격에 맞았음을 표시
                     if self.current_hp <= 0:
                         self.current_hp = 0
                         self.state_machine.handle_state_event(('DEATH', None))
