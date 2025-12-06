@@ -411,6 +411,11 @@ class Slime:
         if group == 'character:slime':
             self.x = self.prev_x
             self.y = self.prev_y
+        elif group == 'slime:wall':
+            self.x = self.prev_x
+            self.y = self.prev_y
+            # 벽에 부딪히면 새로운 목표 지점 설정
+            self.set_random_location()
         elif group == 'attack:slime':
             if self.state_machine.cur_state != self.DEATH and self.state_machine.cur_state != self.HURT and not self.is_hit:
                 attack_bb = other.get_attack_bb()

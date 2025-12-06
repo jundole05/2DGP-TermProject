@@ -7,12 +7,14 @@ import common
 from character import Character
 from slime import spawn_slimes
 from background import Background
+from wall import Wall
 
 startscreen = None
 show_startscreen = True
 character = None
 background = None
 slimes = []
+walls = []
 
 def handle_events():
     global show_startscreen
@@ -24,9 +26,9 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN and show_startscreen:
             add_background()
+            add_walls()  # 추가
             show_startscreen = False
         elif not show_startscreen:
-            # 2번 키 - 모든 슬라임 death 토글
             if event.type == SDL_KEYDOWN and event.key == SDLK_2:
                 for slime in slimes:
                     slime.state_machine.handle_state_event(('DEATH', None))
@@ -52,6 +54,20 @@ def add_background():
         background = Background()
         game_world.add_object(background, 0)
 
+
+def add_walls():
+    global walls
+    # 벽 추가 - 여기에 원하는 만큼 벽을 추가
+    walls.append(Wall(800, 500, 100, 300))
+    walls.append(Wall(400, 300, 200, 50))
+    walls.append(Wall(1200, 700, 150, 100))
+
+    for wall in walls:
+        game_world.add_object(wall, 1)
+        game_world.add_collision_pair('character:wall', common.character, wall)
+        for slime in slimes:
+            game_world.add_collision_pair('slime:wall', slime, wall)
+
 def init():
     global startscreen, slimes
     startscreen = load_image("./Resource/startscreen/startscreen.png")
@@ -60,10 +76,12 @@ def init():
 
     slimes = spawn_slimes(5)
 
-
     game_world.add_collision_pair('character:slime', common.character, None)
     game_world.add_collision_pair('attack:slime', common.character, None)
     game_world.add_collision_pair('slime_attack:character', None, common.character)
+    game_world.add_collision_pair('character:wall', common.character, None)
+    game_world.add_collision_pair('slime:wall', None, None)
+
     for slime in slimes:
         game_world.add_collision_pair('character:slime', None, slime)
         game_world.add_collision_pair('attack:slime', None, slime)
