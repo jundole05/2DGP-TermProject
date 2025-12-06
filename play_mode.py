@@ -8,6 +8,7 @@ from character import Character
 from slime import spawn_slimes
 from background import Background
 from wall import Wall
+from portal import Portal
 
 startscreen = None
 show_startscreen = True
@@ -15,6 +16,8 @@ character = None
 background = None
 slimes = []
 walls = []
+portal = None
+current_stage = 1
 
 def handle_events():
     global show_startscreen
@@ -25,8 +28,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN and show_startscreen:
-            add_background()
-            add_walls()  # 추가
+            init_stage_1()
             show_startscreen = False
         elif not show_startscreen:
             if event.type == SDL_KEYDOWN and event.key == SDLK_2:
@@ -67,30 +69,133 @@ def add_walls():
         for slime in slimes:
             game_world.add_collision_pair('slime:wall', slime, wall)
 
-def init():
-    global startscreen, slimes
-    startscreen = load_image("./Resource/startscreen/startscreen.png")
-    common.character = Character()
-    game_world.add_object(common.character, 2)
 
+def init_stage_1():
+    global background, slimes, walls, portal, current_stage
+    current_stage = 1
+
+    # 배경 추가
+    if background is None:
+        background = Background()
+        game_world.add_object(background, 0)
+    else:
+        background.image = load_image('./Resource/map/map1.png')
+
+    # 기존 슬라임 제거
+    for slime in slimes:
+        game_world.remove_object(slime)
+    slimes.clear()
+
+    # 기존 벽 제거
+    for wall in walls:
+        game_world.remove_object(wall)
+    walls.clear()
+
+    # 1스테이지 슬라임 생성 (5마리)
     slimes = spawn_slimes(5)
 
+    # 1스테이지 벽 생성
+    walls.append(Wall(80, 700, 22, 750))
+    for wall in walls:
+        game_world.add_object(wall, 1)
+
+    # 포탈 생성 (좌표: 1400, 800)
+    if portal is None:
+        portal = Portal(1400, 800, 100, 100)
+        game_world.add_object(portal, 1)
+
+    # 충돌 쌍 재설정
+    setup_collisions()
+
+
+def init_stage_2():
+    global background, slimes, walls, portal, current_stage
+    current_stage = 2
+
+    # 배경 변경
+    background.image = load_image('./Resource/map/map2.png')
+
+    # 기존 슬라임 제거
+    for slime in slimes:
+        game_world.remove_object(slime)
+    slimes.clear()
+
+    # 기존 벽 제거
+    for wall in walls:
+        game_world.remove_object(wall)
+    walls.clear()
+
+    # 포탈 제거
+    if portal:
+        game_world.remove_object(portal)
+        portal = None
+
+    # 2스테이지 슬라임 생성 (7마리로 증가)
+    slimes = spawn_slimes(7)
+
+    # 2스테이지 벽 생성 (예시)
+    walls.append(Wall(800, 500, 150, 300))
+    walls.append(Wall(400, 700, 200, 100))
+    for wall in walls:
+        game_world.add_object(wall, 1)
+
+    # 캐릭터 위치 초기화
+    common.character.x = 200
+    common.character.y = 200
+
+    # 충돌 쌍 재설정
+    setup_collisions()
+
+
+def setup_collisions():
+    # 기존 충돌 쌍 초기화
+    game_world.collision_pairs.clear()
+
+    # 캐릭터 관련 충돌
     game_world.add_collision_pair('character:slime', common.character, None)
     game_world.add_collision_pair('attack:slime', common.character, None)
     game_world.add_collision_pair('slime_attack:character', None, common.character)
     game_world.add_collision_pair('character:wall', common.character, None)
     game_world.add_collision_pair('slime:wall', None, None)
 
+    # 포탈 충돌 (1스테이지만)
+    if portal and current_stage == 1:
+        game_world.add_collision_pair('character:portal', common.character, portal)
+
+    # 슬라임 충돌 등록
     for slime in slimes:
         game_world.add_collision_pair('character:slime', None, slime)
         game_world.add_collision_pair('attack:slime', None, slime)
         game_world.add_collision_pair('slime_attack:character', slime, None)
-    pass
+        game_world.add_collision_pair('slime:wall', slime, None)
+
+    # 벽 충돌 등록
+    for wall in walls:
+        game_world.add_collision_pair('character:wall', None, wall)
+        for slime in slimes:
+            game_world.add_collision_pair('slime:wall', None, wall)
+
+
+def init():
+    global startscreen
+    startscreen = load_image("./Resource/startscreen/startscreen.png")
+    common.character = Character()
+    game_world.add_object(common.character, 2)
+
 
 def update():
     if not show_startscreen:
         game_world.update()
         game_world.handle_collisions()
+
+        # 캐릭터가 레벨 2가 되면 포탈 활성화
+        if portal and common.character.level >= 2:
+            portal.activate()
+
+        # 포탈 트리거 확인 (충돌 처리 후 실행)
+        if hasattr(common.character, 'portal_triggered') and common.character.portal_triggered:
+            delattr(common.character, 'portal_triggered')
+            init_stage_2()
 
 def draw():
     clear_canvas()

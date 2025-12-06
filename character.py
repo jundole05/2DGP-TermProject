@@ -427,6 +427,10 @@ class Character:
             self.x, self.y = self.prev_x, self.prev_y
         elif group == 'character:wall':
             self.x, self.y = self.prev_x, self.prev_y
+        elif group == 'character:portal':
+            # 포탈이 활성화되어 있으면 2스테이지로 이동 (다음 프레임에)
+            if other.active and not hasattr(self, 'portal_triggered'):
+                self.portal_triggered = True
         elif group == 'attack:slime':
             pass
         elif group == 'slime_attack:character':
