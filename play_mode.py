@@ -58,9 +58,8 @@ def add_background():
 def add_walls():
     global walls
     # 벽 추가 - 여기에 원하는 만큼 벽을 추가
-    walls.append(Wall(800, 500, 100, 300))
-    walls.append(Wall(400, 300, 200, 50))
-    walls.append(Wall(1200, 700, 150, 100))
+    walls.append(Wall(80, 700, 22, 750))
+
 
     for wall in walls:
         game_world.add_object(wall, 1)
