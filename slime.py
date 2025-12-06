@@ -176,6 +176,7 @@ class Death:
         self.slime.dir_x = 0
         self.slime.dir_y = 0
         self.animation_finished = False
+        self.exp_given = False  # 경험치 지급 여부
 
     def exit(self, e):
         pass
@@ -184,8 +185,12 @@ class Death:
         if not self.animation_finished:
             self.slime.frame += DEATH_FRAMES * ACTION_PER_TIME * game_framework.frame_time
             if self.slime.frame >= DEATH_FRAMES:
-                self.slime.frame = DEATH_FRAMES - 1  # 마지막 프레임에 고정
+                self.slime.frame = DEATH_FRAMES - 1
                 self.animation_finished = True
+                # 경험치 지급 (한 번만)
+                if not self.exp_given and common.character:
+                    common.character.add_exp(1)
+                    self.exp_given = True
 
     def draw(self):
         img = self.slime.death_image

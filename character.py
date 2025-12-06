@@ -64,7 +64,7 @@ DEATH_FRAMES = 7
 class Idle:
     def __init__(self, character):
         self.character = character
-        self.image = load_image('./Resource/character/Lv1/idle.png')
+        self.image = load_image(f'./Resource/character/Lv{character.level}/idle.png')
 
     def enter(self, e):
         self.character.dir_x = 0
@@ -84,7 +84,7 @@ class Idle:
 class Run:
     def __init__(self, character):
         self.character = character
-        self.image = load_image('./Resource/character/Lv1/run.png')
+        self.image = load_image(f'./Resource/character/Lv{character.level}/run.png')
 
     def enter(self, e):
         self.update_key_state(e)
@@ -160,13 +160,16 @@ class Run:
 class Attack:
     def __init__(self, character):
         self.character = character
-        self.image = load_image('./Resource/character/Lv1/attack.png')
+        self.image = load_image(f'./Resource/character/Lv{character.level}/attack.png')
         self.timer = 0
         self.attack_bb = None
+        self.prev_state = None  # 추가
 
     def enter(self, e):
         self.character.frame = 0
         self.timer = 0
+        self.attack_bb = None
+        self.prev_state = None
         self.prev_state = type(self.character.state_machine.cur_state)
         for obj in game_world.world[1]:  # 슬라임이 있는 레이어
             if hasattr(obj, 'is_hit'):
@@ -190,10 +193,12 @@ class Attack:
             return (char_x - 25, char_y - 45 - bb_extend, char_x + 25, char_y - 35)
 
     def do(self):
-        self.character.frame += ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time
-        self.attack_bb = self.get_attack_bb()
+        self.timer += game_framework.frame_time
+        self.character.frame = (self.character.frame + ATTACK_FRAMES * ACTION_PER_TIME * game_framework.frame_time)
+
         if self.character.frame >= ATTACK_FRAMES:
-            if self.prev_state == Idle:
+            self.character.frame = 0
+            if hasattr(self, 'prev_state') and self.prev_state == Idle:
                 self.character.state_machine.change_state(self.character.IDLE)
             else:
                 self.character.state_machine.change_state(self.character.RUN)
@@ -210,7 +215,7 @@ class Attack:
 class Death:
     def __init__(self, character):
         self.character = character
-        self.image = load_image('./Resource/character/Lv1/death.png')
+        self.image = load_image(f'./Resource/character/Lv{character.level}/death.png')
 
     def enter(self, e):
         self.character.frame = 0
@@ -235,7 +240,7 @@ class Death:
 class Hurt:
     def __init__(self, character):
         self.character = character
-        self.image = load_image('./Resource/character/Lv1/hurt.png')
+        self.image = load_image(f'./Resource/character/Lv{character.level}/hurt.png')
 
     def enter(self, e):
         self.character.frame = 0
@@ -275,10 +280,16 @@ class Character:
         self.key_left = False
         self.key_right = False
 
-        # 체력 시스템 추가
+        # 체력 시스템
         self.max_hp = 10
         self.current_hp = 10
 
+        # 경험치 시스템 추가
+        self.level = 1
+        self.current_exp = 0
+        self.max_exp = 5
+
+        # 초기 레벨 1 상태 생성
         self.IDLE = Idle(self)
         self.RUN = Run(self)
         self.ATTACK = Attack(self)
@@ -294,6 +305,48 @@ class Character:
                 self.HURT: {}
             }
         )
+
+    def add_exp(self, exp):
+        """경험치 추가 및 레벨업 처리"""
+        self.current_exp += exp
+        if self.current_exp >= self.max_exp:
+            self.level_up()
+
+    def level_up(self):
+        """레벨업 처리"""
+        self.level += 1
+        self.current_exp = 0
+        # 레벨업 시 모든 상태의 이미지를 새 레벨로 교체
+        current_state = self.state_machine.cur_state
+        self.IDLE = Idle(self)
+        self.RUN = Run(self)
+        self.ATTACK = Attack(self)
+        self.DEATH = Death(self)
+        self.HURT = Hurt(self)
+
+        # 상태머신 재구성
+        self.state_machine = StateMachine(
+            self.IDLE,
+            {
+                self.IDLE: {any_key_down: self.RUN, space_down: self.ATTACK, one_down: self.DEATH},
+                self.RUN: {any_key_up: self.IDLE, space_down: self.ATTACK, one_down: self.DEATH},
+                self.ATTACK: {one_down: self.DEATH},
+                self.DEATH: {one_down: self.IDLE},
+                self.HURT: {}
+            }
+        )
+
+        # 현재 상태 유지 (Idle이었으면 Idle로, Run이었으면 Run으로)
+        if isinstance(current_state, Idle):
+            self.state_machine.cur_state = self.IDLE
+        elif isinstance(current_state, Run):
+            self.state_machine.cur_state = self.RUN
+        elif isinstance(current_state, Attack):
+            self.state_machine.cur_state = self.ATTACK
+        elif isinstance(current_state, Death):
+            self.state_machine.cur_state = self.DEATH
+        elif isinstance(current_state, Hurt):
+            self.state_machine.cur_state = self.HURT
 
     def draw_hp_bar(self):
         # 체력바 위치
@@ -317,6 +370,28 @@ class Character:
                 draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
                           bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i, 255, 0, 0)
 
+    def draw_exp_bar(self):
+        """경험치 바 그리기 (체력바 아래)"""
+        bar_x = self.x
+        bar_y = self.y + 50  # 체력바 아래
+        bar_width = 60
+        bar_height = 6
+
+        # 배경 (회색 바)
+        for i in range(int(bar_height)):
+            draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
+                      bar_x + bar_width // 2, bar_y - bar_height // 2 + i, 128, 128, 128)
+
+        # 경험치 비율 계산
+        exp_ratio = self.current_exp / self.max_exp
+        current_bar_width = bar_width * exp_ratio
+
+        # 경험치 바 (노란색)
+        if self.current_exp > 0:
+            for i in range(int(bar_height)):
+                draw_line(bar_x - bar_width // 2, bar_y - bar_height // 2 + i,
+                          bar_x - bar_width // 2 + current_bar_width, bar_y - bar_height // 2 + i, 255, 255, 0)
+
     def update(self):
         self.prev_x, self.prev_y = self.x, self.y
         self.state_machine.update()
@@ -338,6 +413,7 @@ class Character:
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
         self.draw_hp_bar()
+        self.draw_exp_bar()  # 경험치바 추가
 
     def get_bb(self):
         return self.x - 25, self.y - 40, self.x + 25, self.y + 35
