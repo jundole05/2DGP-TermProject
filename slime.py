@@ -394,8 +394,8 @@ class Slime:
         self.state_machine.update()
 
         # 화면 경계 체크
-        self.x = max(50, min(self.x, 1600 - 50))
-        self.y = max(50, min(self.y, 900 - 50))
+        self.x = max(25, min(self.x, 1600 - 25))
+        self.y = max(25, min(self.y, 1000 - 25))
 
     def draw(self):
         self.state_machine.draw()
@@ -435,13 +435,55 @@ class Slime:
         pass
 
 
-def spawn_slimes(count = 5, depth = 1):
+def _rects_overlap(a_left, a_bottom, a_right, a_top, b_left, b_bottom, b_right, b_top):
+    if a_left > b_right or a_right < b_left or a_top < b_bottom or a_bottom > b_top:
+        return False
+    return True
+
+def spawn_slimes(count=5, depth=1, avoid_objects=None):
+    """
+    avoid_objects: get_bb()를 제공하는 객체들의 리스트 (예: [common.character, wall1, wall2, ...])
+    가능한 충돌이 없는 위치를 시도하여 슬라임 생성. 시도 제한 초과 시 강제 생성.
+    """
+    avoid_objects = avoid_objects or []
     slimes = []
     for _ in range(count):
-        stype = random.randint(0, 2)
-        x = random.randint(50, 1550)
-        y = random.randint(50, 950)
-        s = Slime(slime_type = stype, x = x, y = y, draw_w = 100, draw_h = 100)
-        slimes.append(s)
-        game_world.add_object(s, depth)
+        attempts = 0
+        placed = False
+        while not placed and attempts < 60:
+            attempts += 1
+            stype = random.randint(0, 2)
+            x = random.randint(50, 1550)
+            y = random.randint(50, 950)
+            # 대략적인 바운딩박스: Slime 기본 draw_w/draw_h = 100 사용
+            half_w = 50
+            half_h = 50
+            left, bottom, right, top = x - half_w, y - half_h, x + half_w, y + half_h
+
+            collision = False
+            for obj in avoid_objects:
+                try:
+                    o_left, o_bottom, o_right, o_top = obj.get_bb()
+                except Exception:
+                    # get_bb가 없으면 무시
+                    continue
+                if _rects_overlap(left, bottom, right, top, o_left, o_bottom, o_right, o_top):
+                    collision = True
+                    break
+
+            if not collision:
+                s = Slime(slime_type=stype, x=x, y=y, draw_w=100, draw_h=100)
+                slimes.append(s)
+                game_world.add_object(s, depth)
+                placed = True
+
+        # 시도 초과하면 강제 생성 (어쩔 수 없는 경우)
+        if not placed:
+            stype = random.randint(0, 2)
+            x = random.randint(50, 1550)
+            y = random.randint(50, 950)
+            s = Slime(slime_type=stype, x=x, y=y, draw_w=100, draw_h=100)
+            slimes.append(s)
+            game_world.add_object(s, depth)
+
     return slimes

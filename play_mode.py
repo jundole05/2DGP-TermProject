@@ -91,8 +91,7 @@ def init_stage_1():
         game_world.remove_object(wall)
     walls.clear()
 
-    # 1스테이지 슬라임 생성 (5마리)
-    slimes = spawn_slimes(5)
+
 
     # 1스테이지 벽 생성
     walls.append(Wall(80, 700, 22, 750))
@@ -111,6 +110,9 @@ def init_stage_1():
     walls.append(Wall(1150, 900, 22, 170))
     for wall in walls:
         game_world.add_object(wall, 1)
+
+    avoid = [common.character] + walls if common.character else walls
+    slimes = spawn_slimes(5, depth=1, avoid_objects=avoid)
 
     # 포탈 생성 (좌표: 1400, 800)
     if portal is None:
@@ -143,14 +145,15 @@ def init_stage_2():
         game_world.remove_object(portal)
         portal = None
 
-    # 2스테이지 슬라임 생성 (7마리로 증가)
-    slimes = spawn_slimes(7)
 
     # 2스테이지 벽 생성 (예시)
     walls.append(Wall(800, 500, 150, 300))
     walls.append(Wall(400, 700, 200, 100))
     for wall in walls:
         game_world.add_object(wall, 1)
+
+    avoid = [common.character] + walls if common.character else walls
+    slimes = spawn_slimes(7, depth=1, avoid_objects=avoid)
 
     # 캐릭터 위치 초기화
     common.character.x = 200
