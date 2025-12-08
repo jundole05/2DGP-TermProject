@@ -316,6 +316,13 @@ class Character:
         """레벨업 처리"""
         self.level += 1
         self.current_exp = 0
+
+        # 레벨별 최대 경험치 설정
+        if self.level == 2:
+            self.max_exp = 7
+        elif self.level == 3:
+            self.max_exp = 10  # 필요시 조정
+
         # 레벨업 시 모든 상태의 이미지를 새 레벨로 교체
         current_state = self.state_machine.cur_state
         self.IDLE = Idle(self)
@@ -336,7 +343,7 @@ class Character:
             }
         )
 
-        # 현재 상태 유지 (Idle이었으면 Idle로, Run이었으면 Run으로)
+        # 현재 상태 유지
         if isinstance(current_state, Idle):
             self.state_machine.cur_state = self.IDLE
         elif isinstance(current_state, Run):
