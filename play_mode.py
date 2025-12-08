@@ -96,12 +96,25 @@ def init_stage_1():
 
     # 1스테이지 벽 생성
     walls.append(Wall(80, 700, 22, 750))
+    walls.append(Wall(1520, 700, 22, 750))
+    walls.append(Wall(350, 360, 560, 50))
+    walls.append(Wall(1240, 360, 560, 50))
+
+    walls.append(Wall(430, 630, 400, 50))
+    walls.append(Wall(240, 800, 22, 350))
+    walls.append(Wall(1160, 630, 400, 50))
+    walls.append(Wall(1360, 800, 22, 350))
+
+    walls.append(Wall(570, 830, 240, 50))
+    walls.append(Wall(450, 900, 22, 170))
+    walls.append(Wall(1030, 830, 240, 50))
+    walls.append(Wall(1150, 900, 22, 170))
     for wall in walls:
         game_world.add_object(wall, 1)
 
     # 포탈 생성 (좌표: 1400, 800)
     if portal is None:
-        portal = Portal(1400, 800, 100, 100)
+        portal = Portal(800, 950, 100, 100)
         game_world.add_object(portal, 1)
 
     # 충돌 쌍 재설정
