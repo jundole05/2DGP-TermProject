@@ -6,7 +6,8 @@ class Portal:
         self.y = y
         self.width = width
         self.height = height
-        self.active = False  # 레벨 2가 되면 활성화
+        self.active = False
+        self.image = load_image('./Resource/map/portal1.png')
 
     def update(self):
         pass
@@ -14,6 +15,7 @@ class Portal:
     def draw(self):
         # 투명 포탈이지만 디버깅용 바운딩박스 (초록색)
         if self.active:
+            self.image.draw(self.x, self.y, self.width, self.height)
             left = self.x - self.width // 2
             right = self.x + self.width // 2
             bottom = self.y - self.height // 2

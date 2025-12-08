@@ -394,7 +394,7 @@ class Slime:
         self.state_machine.update()
 
         # 화면 경계 체크
-        self.x = max(25, min(self.x, 1600 - 25))
+        self.x = max(50, min(self.x, 1600 - 25))
         self.y = max(25, min(self.y, 1000 - 25))
 
     def draw(self):
