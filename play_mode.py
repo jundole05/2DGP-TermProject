@@ -12,6 +12,8 @@ from portal import Portal
 
 startscreen = None
 show_startscreen = True
+show_help = False  # 게임 설명 화면 표시 여부
+help_image = None  # 게임 설명 이미지
 character = None
 background = None
 slimes = []
@@ -19,17 +21,56 @@ walls = []
 portal = None
 current_stage = 1
 
+# 버튼 영역 정의 (x, y, width, height)
+START_BUTTON = {'x': 1250, 'y': 340, 'width': 260, 'height': 100}
+HELP_BUTTON = {'x': 1250, 'y': 200, 'width': 300, 'height': 100}
+EXIT_BUTTON = {'x': 1250, 'y': 70, 'width': 240, 'height': 100}
+BACK_BUTTON = {'x': 150, 'y': 930, 'width': 260, 'height': 90}  # 게임 설명 화면에서 돌아가기
+
+def is_inside_button(mx, my, button):
+    """마우스 좌표가 버튼 영역 안에 있는지 확인"""
+    left = button['x'] - button['width'] // 2
+    right = button['x'] + button['width'] // 2
+    bottom = button['y'] - button['height'] // 2
+    top = button['y'] + button['height'] // 2
+    return left <= mx <= right and bottom <= my <= top
+
+
+def draw_button(button):
+    """버튼 바운딩박스 그리기"""
+    left = button['x'] - button['width'] // 2
+    right = button['x'] + button['width'] // 2
+    bottom = button['y'] - button['height'] // 2
+    top = button['y'] + button['height'] // 2
+
+    # 바운딩박스만 그리기
+    draw_rectangle(left, bottom, right, top)
+
+
 def handle_events():
-    global show_startscreen
+    global show_startscreen, show_help
     event_list = get_events()
     for event in event_list:
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
-        elif event.type == SDL_MOUSEBUTTONDOWN and show_startscreen:
-            init_stage_1()
-            show_startscreen = False
+        elif event.type == SDL_MOUSEBUTTONDOWN:
+            mx, my = event.x, 1000 - event.y  # SDL 좌표계를 Pico2D 좌표계로 변환
+
+            if show_startscreen and not show_help:
+                # 시작 화면 버튼 클릭 처리
+                if is_inside_button(mx, my, START_BUTTON):
+                    init_stage_1()
+                    show_startscreen = False
+                elif is_inside_button(mx, my, HELP_BUTTON):
+                    show_help = True
+                elif is_inside_button(mx, my, EXIT_BUTTON):
+                    game_framework.quit()
+            elif show_help:
+                # 게임 설명 화면에서 뒤로가기 버튼
+                if is_inside_button(mx, my, BACK_BUTTON):
+                    show_help = False
         elif not show_startscreen:
             if event.type == SDL_KEYDOWN and event.key == SDLK_2:
                 for slime in slimes:
@@ -147,8 +188,7 @@ def init_stage_2():
 
 
     # 2스테이지 벽 생성 (예시)
-    walls.append(Wall(800, 500, 150, 300))
-    walls.append(Wall(400, 700, 200, 100))
+
     for wall in walls:
         game_world.add_object(wall, 1)
 
@@ -193,8 +233,10 @@ def setup_collisions():
 
 
 def init():
-    global startscreen
-    startscreen = load_image("./Resource/startscreen/startscreen.png")
+    global startscreen, help_image
+    startscreen = load_image('./Resource/map/startscreen.png')
+    help_image = load_image('./Resource/map/help.png')  # 게임 설명 이미지 경로
+
     common.character = Character()
     game_world.add_object(common.character, 2)
 
@@ -216,7 +258,16 @@ def update():
 def draw():
     clear_canvas()
     if show_startscreen:
-        startscreen.draw_to_origin(0, 0, 1600, 1000)
+        if show_help:
+            # 게임 설명 화면
+            help_image.draw_to_origin(0, 0, 1600, 1000)
+            draw_button(BACK_BUTTON)
+        else:
+            # 시작 화면
+            startscreen.draw_to_origin(0, 0, 1600, 1000)
+            draw_button(START_BUTTON)
+            draw_button(HELP_BUTTON)
+            draw_button(EXIT_BUTTON)
     else:
         game_world.render()
     update_canvas()
