@@ -251,7 +251,7 @@ def init():
 
     # 효과음 로드
     attack_sound = load_wav('./Resource/sound/attack.mp3')
-    levelup_sound = load_wav('./Resource/sound/levelup.wav')
+    levelup_sound = load_wav('./Resource/sound/levelup.mp3')
     slimeattack_sound = load_wav('./Resource/sound/slimeattack.mp3')
 
     # 볼륨 설정
@@ -260,7 +260,7 @@ def init():
     stage2_music.set_volume(32)
     attack_sound.set_volume(64)
     levelup_sound.set_volume(64)
-    slimeattack_sound.set_volume(64)
+    slimeattack_sound.set_volume(40)
 
     # 로비 음악 재생
     play_music(lobby_music)
@@ -271,14 +271,19 @@ def init():
 
 def update():
     if not show_startscreen:
+        # 이전 레벨 저장
+        prev_level = common.character.level
+
         game_world.update()
         game_world.handle_collisions()
 
-        # 캐릭터가 레벨 2가 되면 포탈 활성화
+        # 레벨업 체크
+        if common.character.level > prev_level:
+            levelup_sound.play()
+
         if portal and common.character.level >= 2:
             portal.activate()
 
-        # 포탈 트리거 확인 (충돌 처리 후 실행)
         if hasattr(common.character, 'portal_triggered') and common.character.portal_triggered:
             delattr(common.character, 'portal_triggered')
             init_stage_2()
