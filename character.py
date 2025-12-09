@@ -3,6 +3,7 @@ from time import sleep
 from pico2d import *
 from sdl2 import *
 
+import play_mode
 import game_world
 import game_framework
 
@@ -214,8 +215,8 @@ class Attack:
                              self.character.y, 150, 150)
         # 공격 바운딩박스 그리기 추가
         attack_bb = self.get_attack_bb()
-        if attack_bb:
-            draw_rectangle(*attack_bb)
+        if play_mode.show_bounding_box:
+            draw_rectangle(*self.get_attack_bb())
 
     def handle_event(self, e):
 
@@ -225,12 +226,13 @@ class Death:
     def __init__(self, character):
         self.character = character
         self.image = load_image(f'./Resource/character/Lv{character.level}/death.png')
-
+        self.death_timer = 0
     def enter(self, e):
         self.character.frame = 0
         self.character.dir_x = 0
         self.character.dir_y = 0
         self.animation_finished = False
+        self.death_timer = 0
 
     def exit(self, e):
         pass
@@ -239,8 +241,21 @@ class Death:
         if not self.animation_finished:
             self.character.frame += DEATH_FRAMES * ACTION_PER_TIME * game_framework.frame_time
             if self.character.frame >= DEATH_FRAMES:
-                self.character.frame = DEATH_FRAMES - 1  # 마지막 프레임에 고정
+                self.character.frame = DEATH_FRAMES - 1
                 self.animation_finished = True
+        else:
+            self.death_timer += game_framework.frame_time
+            if self.death_timer >= 3.0:
+                game_world.clear()
+                play_mode.slimes = []
+                play_mode.walls = []
+                play_mode.portal = None
+                play_mode.background = None
+                play_mode.current_stage = 1
+                play_mode.show_startscreen = True
+                play_mode.show_help = False
+                play_mode.show_complete = False
+                game_framework.change_mode(play_mode)
 
     def draw(self):
         self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x,
@@ -427,7 +442,8 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
+        if play_mode.show_bounding_box:
+            draw_rectangle(*self.get_bb())
         self.draw_hp_bar()
         self.draw_exp_bar()  # 경험치바 추가
 

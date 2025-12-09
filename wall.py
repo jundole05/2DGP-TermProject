@@ -1,4 +1,5 @@
 from pico2d import *
+import play_mode
 
 class Wall:
     def __init__(self, x, y, width, height):
@@ -16,7 +17,8 @@ class Wall:
         right = self.x + self.width // 2
         bottom = self.y - self.height // 2
         top = self.y + self.height // 2
-        draw_rectangle(left, bottom, right, top)
+        if play_mode.show_bounding_box:
+            draw_rectangle(left, bottom, right, top)
 
     def get_bb(self):
         return (self.x - self.width // 2,

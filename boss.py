@@ -4,6 +4,7 @@ import math
 import game_world
 import game_framework
 import common
+import play_mode
 
 PIXEL_PER_METER = 10.0 / 0.3
 WALK_SPEED_KMPH = 10.0
@@ -80,7 +81,8 @@ class Ball:
     def draw(self):
         # 이미지 크기에 맞게 조정 (예: 40x40)
         self.image.draw(self.x, self.y, self.size * 2, self.size * 2)
-        draw_rectangle(*self.get_bb())
+        if play_mode.show_bounding_box:
+            draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return (self.x - self.size//2, self.y - self.size//2,
@@ -199,7 +201,8 @@ class Boss:
             self.attack_image.clip_draw(int(self.frame) * FRAME_W, self.face_dir * FRAME_H,
                                         FRAME_W, FRAME_H, self.x, self.y, 200, 200)
 
-        draw_rectangle(*self.get_bb())
+        if play_mode.show_bounding_box:
+            draw_rectangle(*self.get_bb())
         self.draw_hp_bar()
 
     def draw_hp_bar(self):

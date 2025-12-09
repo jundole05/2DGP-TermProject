@@ -10,6 +10,7 @@ from background import Background
 from wall import Wall
 from portal import Portal
 
+
 startscreen = None
 show_startscreen = True
 show_help = False  # 게임 설명 화면 표시 여부
@@ -20,6 +21,7 @@ slimes = []
 walls = []
 portal = None
 current_stage = 1
+show_bounding_box = False
 
 # 사운드 변수
 lobby_music = None
@@ -57,7 +59,8 @@ def draw_button(button):
     top = button['y'] + button['height'] // 2
 
     # 바운딩박스만 그리기
-    draw_rectangle(left, bottom, right, top)
+    if show_bounding_box:
+        draw_rectangle(left, bottom, right, top)
 
 def play_music(music):
     global current_music
@@ -89,6 +92,9 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
             if not show_startscreen:
                 init_stage_3()
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_b:
+            global show_bounding_box
+            show_bounding_box = not show_bounding_box
         elif event.type == SDL_MOUSEBUTTONDOWN:
             mx, my = event.x, 1000 - event.y
 
@@ -246,13 +252,15 @@ def init_stage_3():
     common.character.x = 200
     common.character.y = 200
 
+    # 충돌 설정 초기화 (벽 충돌 제거)
+    game_world.collision_pairs.clear()
+
     # 보스 생성
     from boss import Boss
     boss = Boss(1200, 500)
     game_world.add_object(boss, 1)
 
     # 충돌 설정
-    setup_collisions()
     game_world.add_collision_pair('character:boss', common.character, boss)
     game_world.add_collision_pair('attack:boss', common.character, boss)
     game_world.add_collision_pair('boss_ball:character', None, common.character)

@@ -20,7 +20,7 @@ class Portal:
             right = self.x + self.width // 2
             bottom = self.y - self.height // 2
             top = self.y + self.height // 2
-            draw_rectangle(left, bottom, right, top, 0, 255, 0)
+
 
     def get_bb(self):
         return (self.x - self.width // 2,

@@ -4,6 +4,7 @@ import game_world
 import game_framework
 from behavior_tree import BehaviorTree, Selector, Sequence, Condition, Action
 import common
+import play_mode
 
 from state_machine import StateMachine
 
@@ -113,9 +114,11 @@ class Attack:
                       FRAME_W, FRAME_H,
                       self.slime.x, self.slime.y,
                       attack_w, attack_h)
-        attack_bb = self.get_attack_bb()
-        if attack_bb:
-            draw_rectangle(*attack_bb)
+
+        if play_mode.show_bounding_box:
+            attack_bb = self.get_attack_bb()
+            if attack_bb:  # None 체크 추가
+                draw_rectangle(*attack_bb)
 
 
 class Idle:
@@ -406,7 +409,8 @@ class Slime:
 
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
+        if play_mode.show_bounding_box:
+            draw_rectangle(*self.get_bb())
         self.draw_hp_bar()
 
     def get_bb(self):
