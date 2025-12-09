@@ -171,7 +171,13 @@ class Attack:
         self.attack_bb = None
         self.prev_state = None
         self.prev_state = type(self.character.state_machine.cur_state)
-        for obj in game_world.world[1]:  # 슬라임이 있는 레이어
+
+        # 공격 사운드 재생
+        import play_mode
+        if play_mode.attack_sound:
+            play_mode.attack_sound.play()
+
+        for obj in game_world.world[1]:
             if hasattr(obj, 'is_hit'):
                 obj.is_hit = False
 

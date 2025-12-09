@@ -75,6 +75,11 @@ class Attack:
         self.slime.dir_y = 0
         self.animation_finished = False
 
+        # 슬라임 공격 사운드 재생
+        import play_mode
+        if play_mode.slimeattack_sound:
+            play_mode.slimeattack_sound.play()
+
     def exit(self, e):
         pass
 

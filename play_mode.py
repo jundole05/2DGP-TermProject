@@ -21,6 +21,15 @@ walls = []
 portal = None
 current_stage = 1
 
+# 사운드 변수
+lobby_music = None
+stage1_music = None
+stage2_music = None
+attack_sound = None
+levelup_sound = None
+slimeattack_sound = None
+current_music = None
+
 # 버튼 영역 정의 (x, y, width, height)
 START_BUTTON = {'x': 1250, 'y': 340, 'width': 260, 'height': 100}
 HELP_BUTTON = {'x': 1250, 'y': 200, 'width': 300, 'height': 100}
@@ -46,6 +55,13 @@ def draw_button(button):
     # 바운딩박스만 그리기
     draw_rectangle(left, bottom, right, top)
 
+def play_music(music):
+    global current_music
+    if current_music:
+        current_music.stop()
+    current_music = music
+    if music:
+        music.repeat_play()
 
 def handle_events():
     global show_startscreen, show_help
@@ -115,52 +131,46 @@ def init_stage_1():
     global background, slimes, walls, portal, current_stage
     current_stage = 1
 
-    # 배경 추가
+    # 1스테이지 음악 재생
+    play_music(stage1_music)
+
     if background is None:
         background = Background()
         game_world.add_object(background, 0)
     else:
         background.image = load_image('./Resource/map/map1.png')
 
-    # 기존 슬라임 제거
     for slime in slimes:
         game_world.remove_object(slime)
     slimes.clear()
 
-    # 기존 벽 제거
     for wall in walls:
         game_world.remove_object(wall)
     walls.clear()
 
-
-
-    # 1스테이지 벽 생성
     walls.append(Wall(80, 700, 22, 750))
     walls.append(Wall(1520, 700, 22, 750))
     walls.append(Wall(350, 360, 560, 50))
     walls.append(Wall(1240, 360, 560, 50))
-
     walls.append(Wall(430, 630, 400, 50))
     walls.append(Wall(240, 800, 22, 350))
     walls.append(Wall(1160, 630, 400, 50))
     walls.append(Wall(1360, 800, 22, 350))
-
     walls.append(Wall(570, 830, 240, 50))
     walls.append(Wall(450, 900, 22, 170))
     walls.append(Wall(1030, 830, 240, 50))
     walls.append(Wall(1150, 900, 22, 170))
+
     for wall in walls:
         game_world.add_object(wall, 1)
 
     avoid = [common.character] + walls if common.character else walls
     slimes = spawn_slimes(5, depth=1, avoid_objects=avoid)
 
-    # 포탈 생성 (좌표: 1400, 800)
     if portal is None:
         portal = Portal(800, 950, 100, 100)
         game_world.add_object(portal, 1)
 
-    # 충돌 쌍 재설정
     setup_collisions()
 
 
@@ -168,26 +178,22 @@ def init_stage_2():
     global background, slimes, walls, portal, current_stage
     current_stage = 2
 
-    # 배경 변경
+    # 2스테이지 음악 재생
+    play_music(stage2_music)
+
     background.image = load_image('./Resource/map/map2.png')
 
-    # 기존 슬라임 제거
     for slime in slimes:
         game_world.remove_object(slime)
     slimes.clear()
 
-    # 기존 벽 제거
     for wall in walls:
         game_world.remove_object(wall)
     walls.clear()
 
-    # 포탈 제거
     if portal:
         game_world.remove_object(portal)
         portal = None
-
-
-    # 2스테이지 벽 생성 (예시)
 
     for wall in walls:
         game_world.add_object(wall, 1)
@@ -195,11 +201,9 @@ def init_stage_2():
     avoid = [common.character] + walls if common.character else walls
     slimes = spawn_slimes(7, depth=1, avoid_objects=avoid)
 
-    # 캐릭터 위치 초기화
     common.character.x = 200
     common.character.y = 200
 
-    # 충돌 쌍 재설정
     setup_collisions()
 
 
@@ -234,8 +238,32 @@ def setup_collisions():
 
 def init():
     global startscreen, help_image
+    global lobby_music, stage1_music, stage2_music
+    global attack_sound, levelup_sound, slimeattack_sound
+
     startscreen = load_image('./Resource/map/startscreen.png')
-    help_image = load_image('./Resource/map/help.png')  # 게임 설명 이미지 경로
+    help_image = load_image('./Resource/map/help.png')
+
+    # 음악 로드
+    lobby_music = load_music('./Resource/sound/lobby.mp3')
+    stage1_music = load_music('./Resource/sound/stage1.mp3')
+    stage2_music = load_music('./Resource/sound/stage2.mp3')
+
+    # 효과음 로드
+    attack_sound = load_wav('./Resource/sound/attack.mp3')
+    levelup_sound = load_wav('./Resource/sound/levelup.wav')
+    slimeattack_sound = load_wav('./Resource/sound/slimeattack.mp3')
+
+    # 볼륨 설정
+    lobby_music.set_volume(32)
+    stage1_music.set_volume(32)
+    stage2_music.set_volume(32)
+    attack_sound.set_volume(64)
+    levelup_sound.set_volume(64)
+    slimeattack_sound.set_volume(64)
+
+    # 로비 음악 재생
+    play_music(lobby_music)
 
     common.character = Character()
     game_world.add_object(common.character, 2)
@@ -274,6 +302,12 @@ def draw():
 
 def finish():
     game_world.clear()
+    if current_music:
+        current_music.stop()
 
-def pause(): pass
-def resume(): pass
+def pause():
+    if current_music:
+        current_music.pause()
+def resume():
+    if current_music:
+        current_music.resume()
