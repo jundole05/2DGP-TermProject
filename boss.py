@@ -25,26 +25,36 @@ class Death:
     def __init__(self, boss):
         self.boss = boss
         self.image = load_image('./Resource/boss/death.png')
+        self.complete_triggered = False
 
     def enter(self, e):
         self.boss.frame = 0
         self.boss.dir_x = 0
         self.boss.dir_y = 0
         self.animation_finished = False
+        self.death_timer = 0
+        self.complete_triggered = False
 
     def exit(self, e):
         pass
 
     def do(self):
         if not self.animation_finished:
-            death_frames = 12  # death 이미지의 프레임 수
-            death_duration = 3.0  # 3초 동안 애니메이션 재생
+            death_frames = 12
+            death_duration = 3.0
             frames_per_second = death_frames / death_duration
 
             self.boss.frame += frames_per_second * game_framework.frame_time
             if self.boss.frame >= death_frames:
                 self.boss.frame = death_frames - 1
                 self.animation_finished = True
+
+        if self.animation_finished:
+            self.death_timer += game_framework.frame_time
+            if self.death_timer >= 3.0 and not self.complete_triggered:
+                self.complete_triggered = True
+                import play_mode
+                play_mode.show_complete_screen()
 
     def draw(self):
         self.image.clip_draw(int(self.boss.frame) * 64, 0, 64, 64,

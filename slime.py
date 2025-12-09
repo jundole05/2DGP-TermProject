@@ -196,6 +196,8 @@ class Death:
                 if not self.exp_given and common.character:
                     common.character.add_exp(1)
                     self.exp_given = True
+                # 애니메이션 끝나면 게임 월드에서 제거
+                game_world.remove_object(self.slime)
 
     def draw(self):
         img = self.slime.death_image

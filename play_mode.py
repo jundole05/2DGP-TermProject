@@ -30,6 +30,9 @@ attack_sound = None
 levelup_sound = None
 slimeattack_sound = None
 current_music = None
+complete_image = None
+complete_music = None
+show_complete = False
 
 # 버튼 영역 정의 (x, y, width, height)
 START_BUTTON = {'x': 1250, 'y': 340, 'width': 260, 'height': 100}
@@ -73,6 +76,10 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
+        elif show_complete:
+            # 완료 화면에서는 아무 키나 누르면 종료
+            if event.type == SDL_KEYDOWN or event.key == SDLK_ESCAPE:
+                game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
             if not show_startscreen:
                 init_stage_1()
@@ -285,18 +292,20 @@ def setup_collisions():
 
 
 def init():
-    global startscreen, help_image
+    global startscreen, help_image, complete_image
     global lobby_music, stage1_music, stage2_music, stage3_music
-    global attack_sound, levelup_sound, slimeattack_sound
+    global attack_sound, levelup_sound, slimeattack_sound, complete_music
 
     startscreen = load_image('./Resource/map/startscreen.png')
     help_image = load_image('./Resource/map/help.png')
+    complete_image = load_image('./Resource/map/complete.png')
 
     # 음악 로드
     lobby_music = load_music('./Resource/sound/lobby.mp3')
     stage1_music = load_music('./Resource/sound/stage1.mp3')
     stage2_music = load_music('./Resource/sound/stage2.mp3')
-    stage3_music = load_music('./Resource/sound/stage3.mp3')  # 추가
+    stage3_music = load_music('./Resource/sound/stage3.mp3')
+    complete_music = load_music('./Resource/sound/complete.mp3')
 
     # 효과음 로드
     attack_sound = load_wav('./Resource/sound/attack.mp3')
@@ -307,12 +316,12 @@ def init():
     lobby_music.set_volume(32)
     stage1_music.set_volume(32)
     stage2_music.set_volume(32)
-    stage3_music.set_volume(32)  # 추가
+    stage3_music.set_volume(32)
+    complete_music.set_volume(32)
     attack_sound.set_volume(64)
     levelup_sound.set_volume(64)
     slimeattack_sound.set_volume(40)
 
-    # 로비 음악 재생
     play_music(lobby_music)
 
     common.character = Character()
@@ -345,15 +354,20 @@ def update():
             elif current_stage == 2:
                 init_stage_3()
 
+def show_complete_screen():
+    global show_complete
+    show_complete = True
+    play_music(complete_music)
+
 def draw():
     clear_canvas()
-    if show_startscreen:
+    if show_complete:
+        complete_image.draw_to_origin(0, 0, 1600, 1000)
+    elif show_startscreen:
         if show_help:
-            # 게임 설명 화면
             help_image.draw_to_origin(0, 0, 1600, 1000)
             draw_button(BACK_BUTTON)
         else:
-            # 시작 화면
             startscreen.draw_to_origin(0, 0, 1600, 1000)
             draw_button(START_BUTTON)
             draw_button(HELP_BUTTON)
