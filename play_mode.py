@@ -25,6 +25,7 @@ current_stage = 1
 lobby_music = None
 stage1_music = None
 stage2_music = None
+stage3_music = None
 attack_sound = None
 levelup_sound = None
 slimeattack_sound = None
@@ -63,6 +64,7 @@ def play_music(music):
     if music:
         music.repeat_play()
 
+
 def handle_events():
     global show_startscreen, show_help
     event_list = get_events()
@@ -71,11 +73,19 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_1:
+            if not show_startscreen:
+                init_stage_1()
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_2:
+            if not show_startscreen:
+                init_stage_2()
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
+            if not show_startscreen:
+                init_stage_3()
         elif event.type == SDL_MOUSEBUTTONDOWN:
-            mx, my = event.x, 1000 - event.y  # SDL 좌표계를 Pico2D 좌표계로 변환
+            mx, my = event.x, 1000 - event.y
 
             if show_startscreen and not show_help:
-                # 시작 화면 버튼 클릭 처리
                 if is_inside_button(mx, my, START_BUTTON):
                     init_stage_1()
                     show_startscreen = False
@@ -84,15 +94,10 @@ def handle_events():
                 elif is_inside_button(mx, my, EXIT_BUTTON):
                     game_framework.quit()
             elif show_help:
-                # 게임 설명 화면에서 뒤로가기 버튼
                 if is_inside_button(mx, my, BACK_BUTTON):
                     show_help = False
         elif not show_startscreen:
-            if event.type == SDL_KEYDOWN and event.key == SDLK_2:
-                for slime in slimes:
-                    slime.state_machine.handle_state_event(('DEATH', None))
-            else:
-                common.character.handle_event(event)
+            common.character.handle_event(event)
 
 def check_attack_collision():
     if isinstance(common.character.state_machine.cur_state, common.character.ATTACK.__class__):
@@ -195,6 +200,10 @@ def init_stage_2():
         game_world.remove_object(portal)
         portal = None
 
+    # 스테이지 2용 포탈 생성 (처음엔 비활성화)
+    portal = Portal(800, 950, 100, 100)
+    game_world.add_object(portal, 1)
+
     for wall in walls:
         game_world.add_object(wall, 1)
 
@@ -207,6 +216,45 @@ def init_stage_2():
     setup_collisions()
 
 
+def init_stage_3():
+    global background, slimes, walls, portal, current_stage
+    current_stage = 3
+
+    # 3스테이지 음악 재생
+    play_music(stage3_music)
+
+    background.image = load_image('./Resource/map/map3.png')
+
+    # 기존 슬라임 제거
+    for slime in slimes:
+        game_world.remove_object(slime)
+    slimes.clear()
+
+    # 기존 벽 제거
+    for wall in walls:
+        game_world.remove_object(wall)
+    walls.clear()
+
+    # 포탈 제거
+    if portal:
+        game_world.remove_object(portal)
+        portal = None
+
+    # 캐릭터 위치 설정
+    common.character.x = 200
+    common.character.y = 200
+
+    # 보스 생성
+    from boss import Boss
+    boss = Boss(1200, 500)
+    game_world.add_object(boss, 1)
+
+    # 충돌 설정
+    setup_collisions()
+    game_world.add_collision_pair('character:boss', common.character, boss)
+    game_world.add_collision_pair('attack:boss', common.character, boss)
+    game_world.add_collision_pair('boss_ball:character', None, common.character)
+
 def setup_collisions():
     # 기존 충돌 쌍 초기화
     game_world.collision_pairs.clear()
@@ -218,8 +266,8 @@ def setup_collisions():
     game_world.add_collision_pair('character:wall', common.character, None)
     game_world.add_collision_pair('slime:wall', None, None)
 
-    # 포탈 충돌 (1스테이지만)
-    if portal and current_stage == 1:
+    # 포탈 충돌 (스테이지 1, 2)
+    if portal:
         game_world.add_collision_pair('character:portal', common.character, portal)
 
     # 슬라임 충돌 등록
@@ -238,7 +286,7 @@ def setup_collisions():
 
 def init():
     global startscreen, help_image
-    global lobby_music, stage1_music, stage2_music
+    global lobby_music, stage1_music, stage2_music, stage3_music
     global attack_sound, levelup_sound, slimeattack_sound
 
     startscreen = load_image('./Resource/map/startscreen.png')
@@ -248,6 +296,7 @@ def init():
     lobby_music = load_music('./Resource/sound/lobby.mp3')
     stage1_music = load_music('./Resource/sound/stage1.mp3')
     stage2_music = load_music('./Resource/sound/stage2.mp3')
+    stage3_music = load_music('./Resource/sound/stage3.mp3')  # 추가
 
     # 효과음 로드
     attack_sound = load_wav('./Resource/sound/attack.mp3')
@@ -258,6 +307,7 @@ def init():
     lobby_music.set_volume(32)
     stage1_music.set_volume(32)
     stage2_music.set_volume(32)
+    stage3_music.set_volume(32)  # 추가
     attack_sound.set_volume(64)
     levelup_sound.set_volume(64)
     slimeattack_sound.set_volume(40)
@@ -281,12 +331,19 @@ def update():
         if common.character.level > prev_level:
             levelup_sound.play()
 
-        if portal and common.character.level >= 2:
+        # 스테이지별 포탈 활성화 조건
+        if current_stage == 1 and portal and common.character.level >= 2:
+            portal.activate()
+        elif current_stage == 2 and portal and common.character.level >= 3:
             portal.activate()
 
+        # 포탈 트리거 체크
         if hasattr(common.character, 'portal_triggered') and common.character.portal_triggered:
             delattr(common.character, 'portal_triggered')
-            init_stage_2()
+            if current_stage == 1:
+                init_stage_2()
+            elif current_stage == 2:
+                init_stage_3()
 
 def draw():
     clear_canvas()

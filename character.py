@@ -210,9 +210,12 @@ class Attack:
                 self.character.state_machine.change_state(self.character.RUN)
 
     def draw(self):
-        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x, self.character.y, 150, 150)
-        if self.attack_bb:
-            draw_rectangle(*self.attack_bb)
+        self.image.clip_draw(int(self.character.frame) * 64, self.character.face_dir * 64, 64, 64, self.character.x,
+                             self.character.y, 150, 150)
+        # 공격 바운딩박스 그리기 추가
+        attack_bb = self.get_attack_bb()
+        if attack_bb:
+            draw_rectangle(*attack_bb)
 
     def handle_event(self, e):
 
@@ -447,6 +450,14 @@ class Character:
         elif group == 'attack:slime':
             pass
         elif group == 'slime_attack:character':
+            if self.state_machine.cur_state != self.HURT and self.state_machine.cur_state != self.DEATH:
+                self.current_hp -= 1
+                if self.current_hp <= 0:
+                    self.current_hp = 0
+                    self.state_machine.change_state(self.DEATH)
+                else:
+                    self.state_machine.change_state(self.HURT)
+        elif group == 'boss_ball:character':
             if self.state_machine.cur_state != self.HURT and self.state_machine.cur_state != self.DEATH:
                 self.current_hp -= 1
                 if self.current_hp <= 0:

@@ -74,6 +74,16 @@ def handle_collisions():
                         attack_top < slime_bottom or attack_bottom > slime_top):
                             a.handle_collision(group, b)
                             b.handle_collision(group, a)
+                elif group == 'attack:boss':
+                    attack_bb = a.get_attack_bb()
+                    if attack_bb:
+                        attack_left, attack_bottom, attack_right, attack_top = attack_bb
+                        boss_left, boss_bottom, boss_right, boss_top = b.get_bb()
+
+                        if not (attack_right < boss_left or attack_left > boss_right or
+                        attack_top < boss_bottom or attack_bottom > boss_top):
+                            a.handle_collision(group, b)
+                            b.handle_collision(group, a)
                 elif group == 'slime_attack:character':
                     slime_attack_bb = a.get_attack_bb()
                     if slime_attack_bb:
