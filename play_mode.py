@@ -195,9 +195,7 @@ def init_stage_2():
 
     background.image = load_image('./Resource/map/map2.png')
 
-    for slime in slimes:
-        game_world.remove_object(slime)
-    slimes.clear()
+
 
     for wall in walls:
         game_world.remove_object(wall)
@@ -232,10 +230,7 @@ def init_stage_3():
 
     background.image = load_image('./Resource/map/map3.png')
 
-    # 기존 슬라임 제거
-    for slime in slimes:
-        game_world.remove_object(slime)
-    slimes.clear()
+
 
     # 기존 벽 제거
     for wall in walls:
