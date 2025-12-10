@@ -347,6 +347,8 @@ class Character:
         elif self.level == 3:
             self.max_exp = 10  # 필요시 조정
 
+        self.current_hp = self.max_hp
+
         # 레벨업 시 모든 상태의 이미지를 새 레벨로 교체
         current_state = self.state_machine.cur_state
         self.IDLE = Idle(self)
